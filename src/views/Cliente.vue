@@ -307,7 +307,11 @@ export default {
         editCliente(cliente) {
             this.cliente = { ...cliente };
             this.cliente.ativo = cliente.ativo ? '1' : '0';
-            this.cliente.numero = parseInt(cliente.numero);
+
+            //Condição pra tirar um warning do console
+            if (cliente.numero != null)
+                this.cliente.numero = parseInt(cliente.numero);
+                
             this.clienteDialog = true;
         },
         findIndexById(id) {
