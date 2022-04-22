@@ -101,8 +101,7 @@
         <Dialog v-model:visible="deleteClientesDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
             <div class="confirmation-content">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="cliente">Are you sure you want to delete the selected
-                    clientes?</span>
+                <span v-if="cliente">Você tem certeza que deseja apagar os clientes selecionados?</span>
             </div>
             <template #footer>
                 <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteClientesDialog = false" />
@@ -162,7 +161,7 @@ export default {
             if (this.cliente.nome.trim()) {
                 try {
                     const response = await axios.post(
-                        "http://localhost:8080/api/cliente",
+                        "http://34.205.37.71:8080/api/cliente",
                         this.cliente
                     );
                     // Captura o id criado pelo banco e alimenta o objeto
@@ -207,7 +206,7 @@ export default {
         async deleteCliente() {
             try {
                 const response = await axios.delete(
-                    `http://localhost:8080/api/cliente/${this.cliente.id}`
+                    `http://34.205.37.71:8080/api/cliente/${this.cliente.id}`
                 );
                 this.clientes = this.clientes.filter(
                     (val) => val.id !== this.cliente.id
@@ -245,7 +244,7 @@ export default {
 
             console.log(clientesIds);
             const response = await axios.delete(
-                "http://localhost:8080/api/cliente", { data: clientesIds }
+                "http://34.205.37.71:8080/api/cliente", { data: clientesIds }
             );
 
             this.clientes = this.clientes.filter(
