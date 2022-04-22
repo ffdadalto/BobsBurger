@@ -28,7 +28,7 @@
                     <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
                         @click="editCliente(slotProps.data)" />
                     <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                        @click="confirmDeleteProduct(slotProps.data)" />
+                        @click="confirmDeleteCliente(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -245,7 +245,7 @@ export default {
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    detail: `Cliente ${this.cliente.nome} excluido do sistema`,
+                    detail: `Cliente ${this.cliente.nome} excluído do sistema`,
                     life: 3000,
                 });
                 this.cliente = {};
@@ -311,7 +311,7 @@ export default {
             //Condição pra tirar um warning do console
             if (cliente.numero != null)
                 this.cliente.numero = parseInt(cliente.numero);
-                
+
             this.clienteDialog = true;
         },
         findIndexById(id) {
@@ -324,6 +324,10 @@ export default {
             }
 
             return index;
+        },
+        confirmDeleteCliente(cliente) {
+            this.cliente = cliente;
+            this.deleteClienteDialog = true;
         },
     },
     mounted() {
