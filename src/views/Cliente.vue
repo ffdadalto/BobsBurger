@@ -23,7 +23,16 @@
             <Column field="bairro" header="Bairro"></Column>
             <Column field="cidade" header="Cidade"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
+            <Column :exportable="false" style="min-width:8rem">
+                <template #body="slotProps">
+                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                        @click="editCliente(slotProps.data)" />
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                        @click="confirmDeleteProduct(slotProps.data)" />
+                </template>
+            </Column>
         </DataTable>
+
 
         <Dialog v-model:visible="clienteDialog" :style="{ width: '550px' }" header="Cadastro de clientes" :modal="true"
             class="p-fluid">
@@ -159,37 +168,58 @@ export default {
         async salvarCliente() {
             this.submitted = true;
             if (this.cliente.nome.trim()) {
-                try {
-                    const response = await axios.post(
-                        "http://34.205.37.71:8080/api/cliente",
-                        this.cliente
-                    );
-                    // Captura o id criado pelo banco e alimenta o objeto
-                    this.cliente.id = response.data.id;
+                if (this.cliente.id) {
+                    try {
+                        const res = await axios.put(`http://34.205.37.71:8080/api/cliente/${this.cliente.id}`, this.cliente);
+                        this.clientes[this.findIndexById(this.cliente.id)] = this.cliente;
 
-                    // Captura o datetime now criado pelo controller e alimenta o objeto
-                    this.cliente.dataCadastro = response.data.dataCadastro;
+                        this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Cliente ${this.cliente.nome} atualizado com sucesso`, life: 3000 });
 
-                    this.$toast.add({
-                        severity: "success",
-                        summary: "Sucesso",
-                        detail: `Cliente ${this.cliente.id} - ${this.cliente.nome} Cadastrado com sucesso`,
-                        life: 3000,
-                    });
+                        this.clienteDialog = false; // Fecha o pop up
+                        this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    }
+                    catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro",
+                            detail: `Não foi possível atualizar o cliente ${this.cliente.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    }
+                } else {
+                    try {
+                        const response = await axios.post(
+                            "http://34.205.37.71:8080/api/cliente",
+                            this.cliente
+                        );
+                        // Captura o id criado pelo banco e alimenta o objeto
+                        this.cliente.id = response.data.id;
 
-                    this.clienteDialog = false; // Fecha o pop up
-                    this.clientes.push(this.cliente); // Adiciona o objeto criado e atualizado na lista
-                    this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                } catch (error) {
-                    console.error(error);
-                    this.$toast.add({
-                        severity: "error",
-                        summary: "Erro no cadastro",
-                        detail: `Não foi possível cadastrar o cliente ${this.cliente.nome}. Erro: ${error}`,
-                        life: 3000,
-                    });
-                } finally {
-                    this.loading = false;
+                        // Captura o datetime now criado pelo controller e alimenta o objeto
+                        this.cliente.dataCadastro = response.data.dataCadastro;
+
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Cliente ${this.cliente.id} - ${this.cliente.nome} Cadastrado com sucesso`,
+                            life: 3000,
+                        });
+
+                        this.clienteDialog = false; // Fecha o pop up
+                        this.clientes.push(this.cliente); // Adiciona o objeto criado e atualizado na lista
+                        this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro no cadastro",
+                            detail: `Não foi possível cadastrar o cliente ${this.cliente.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
+                    }
                 }
             }
         },
@@ -273,6 +303,23 @@ export default {
             //     this.loading = false;
             // }
             // }
+        },
+        editCliente(cliente) {
+            this.cliente = { ...cliente };
+            this.cliente.ativo = cliente.ativo ? '1' : '0';
+            this.cliente.numero = parseInt(cliente.numero);
+            this.clienteDialog = true;
+        },
+        findIndexById(id) {
+            let index = -1;
+            for (let i = 0; i < this.clientes.length; i++) {
+                if (this.clientes[i].id === id) {
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
         },
     },
     mounted() {
