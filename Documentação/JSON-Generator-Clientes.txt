@@ -1,0 +1,15 @@
+[
+  '{{repeat(200)}}',
+  {                       
+    nome: '{{firstName()}} {{surname()}}',            
+    telefone: '{{phone()}}',
+    cep: '{{random("291620-010", "29162-100", "29165-544")}}',
+    endereco: '{{street()}}',    
+    numero: '{{integer(1, 999)}}',    
+    complemento: '{{random("Casa", "Apartamento", "Beco")}}',
+    bairro: '{{random("Jardim Tropical", "José de Anchieta", "Laranjeiras Velha", "Central Carapina", "Jardim Limoeiro")}}',
+    cidade: '{{random("Serra", "Vitória", "Vila Velha", "Cariacica")}}',
+    dataCadastro: '{{date(new Date(2022, 0, 1), new Date(), "YYYY/MM/dd hh:mm:ss")}}',
+    ativo: '{{integer(0, 1)}}'   
+  }
+]
