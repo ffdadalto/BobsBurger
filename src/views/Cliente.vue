@@ -168,7 +168,7 @@ export default {
         async salvarCliente() {
             this.submitted = true;
             if (this.cliente.nome.trim()) {
-                if (this.cliente.id) {
+                if (this.cliente.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
                         const res = await axios.put(`http://34.205.37.71:8080/api/cliente/${this.cliente.id}`, this.cliente);
                         this.clientes[this.findIndexById(this.cliente.id)] = this.cliente;
@@ -186,8 +186,11 @@ export default {
                             detail: `Não foi possível atualizar o cliente ${this.cliente.nome}. Erro: ${error}`,
                             life: 3000,
                         });
+                    } finally {
+                        this.loading = false;
                     }
-                } else {
+                }
+                else { // Cadastro
                     try {
                         const response = await axios.post(
                             "http://34.205.37.71:8080/api/cliente",
@@ -265,44 +268,42 @@ export default {
 
         // Metodo para deletar varios clientes
         async deleteSelectedClientes() {
-            // if (this.selectedClientes.length > 0) {
-            //     try {
-            let clientesIds = [];
-            this.selectedClientes.forEach((e) => {
-                clientesIds.push(e.id);
-            });
+            try {
+                let clientesIds = [];
+                this.selectedClientes.forEach((e) => {
+                    clientesIds.push(e.id);
+                });
 
-            console.log(clientesIds);
-            const response = await axios.delete(
-                "http://34.205.37.71:8080/api/cliente", { data: clientesIds }
-            );
+                console.log(clientesIds);
+                const response = await axios.delete(
+                    "http://34.205.37.71:8080/api/cliente", { data: clientesIds }
+                );
 
-            this.clientes = this.clientes.filter(
-                (val) => !this.selectedClientes.includes(val)
-            );
+                this.clientes = this.clientes.filter(
+                    (val) => !this.selectedClientes.includes(val)
+                );
 
-            this.deleteClientesDialog = false;
-            this.selectedClientes = null;
-            this.$toast.add({
-                severity: "success",
-                summary: "Sucesso",
-                // detail: "Os clientes selecionados foram excluídos dos sistema",
-                detail: response.data.message, // A mensagem foi definida no controller
-                life: 3000,
-            });
+                this.deleteClientesDialog = false;
+                this.selectedClientes = null;
+                this.$toast.add({
+                    severity: "success",
+                    summary: "Sucesso",
+                    // detail: "Os clientes selecionados foram excluídos dos sistema",
+                    detail: response.data.message, // A mensagem foi definida no controller
+                    life: 3000,
+                });
 
-            // } catch (error) {
-            //     console.error(error);
-            //     this.$toast.add({
-            //         severity: "error",
-            //         summary: "Erro",
-            //         detail: `Não foi possível excluir os clientes selecionados. Erro: ${error}`,
-            //         life: 3000,
-            //     });
-            // } finally {
-            //     this.loading = false;
-            // }
-            // }
+            } catch (error) {
+                console.error(error);
+                this.$toast.add({
+                    severity: "error",
+                    summary: "Erro",
+                    detail: `Não foi possível excluir os clientes selecionados. Erro: ${error}`,
+                    life: 3000,
+                });
+            } finally {
+                this.loading = false;
+            }
         },
         editCliente(cliente) {
             this.cliente = { ...cliente };
