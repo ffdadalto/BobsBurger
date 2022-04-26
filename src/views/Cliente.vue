@@ -25,9 +25,9 @@
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
-                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2 editar"
+                    <Button icon="pi pi-pencil" class="p-button-rounded mr-2 editar"
                         @click="editCliente(slotProps.data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning excluir"
+                    <Button icon="pi pi-trash" class="p-button-rounded excluir"
                         @click="confirmDeleteCliente(slotProps.data)" />
                 </template>
             </Column>
@@ -88,8 +88,8 @@
             </div>
 
             <template #footer>
-                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                <Button label="Save" icon="pi pi-check" class="p-button-text" @click="salvarCliente" />
+                <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+                <Button label="Salvar" icon="pi pi-check" class="p-button-text" @click="salvarCliente" />
             </template>
         </Dialog>
 
@@ -101,8 +101,8 @@
                     <b>{{ cliente.nome }}</b>?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteClienteDialog = false" />
-                <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteCliente" />
+                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteClienteDialog = false" />
+                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteCliente" />
             </template>
         </Dialog>
 
@@ -113,8 +113,8 @@
                 <span v-if="cliente">Você tem certeza que deseja apagar os clientes selecionados?</span>
             </div>
             <template #footer>
-                <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteClientesDialog = false" />
-                <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedClientes" />
+                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteClientesDialog = false" />
+                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteSelectedClientes" />
             </template>
         </Dialog>
 
@@ -342,15 +342,25 @@ export default {
     margin-bottom: 15px;
 }
 
-td>button.editar {
+.editar {
     color: white;
-    background: #ffb600;
-    border: #ffb600;
+    background: #ffc107;
+    border: #ffc107;
 }
 
-td>button.excluir {
+td>button.editar:hover {
+    background: #e0a100;
+    border: #e0a100;
+}
+
+.excluir {
     color: white;
-    background: #D32F2F;
-    border: #D32F2F;
+    background: #dc3545;
+    border: #dc3545;
+}
+
+td>button.excluir:hover {
+    background: #ad2626;
+    border: #ad2626;
 }
 </style>
