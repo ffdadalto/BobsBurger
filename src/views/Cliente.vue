@@ -4,7 +4,7 @@
         <Toolbar class="mb-4">
             <template #start>
                 <Button label="Novo" icon="pi pi-plus" class="p-button-success mr-2" @click="abrirNovo" />
-                <Button label="Delete" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
+                <Button label="Excuir" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
                     :disabled="!selectedClientes || !selectedClientes.length" />
             </template>
         </Toolbar>
@@ -25,9 +25,9 @@
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
-                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                    <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2 editar"
                         @click="editCliente(slotProps.data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-warning excluir"
                         @click="confirmDeleteCliente(slotProps.data)" />
                 </template>
             </Column>
@@ -124,6 +124,7 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
+import { baseApiUrl } from "@/global";
 
 const axios = require("axios");
 
@@ -141,14 +142,13 @@ export default {
             deleteClientesDialog: false,
             deleteClienteDialog: false,
             selectedClientes: null,
+            url: `${baseApiUrl}/cliente/`
         };
     },
     methods: {
         async getClientes() {
             try {
-                const response = await axios.get(
-                    "http://34.205.37.71:8080/api/cliente"
-                );
+                const response = await axios.get(this.url);
                 this.clientes = response.data;
             } catch (error) {
                 console.error(error);
@@ -170,7 +170,7 @@ export default {
             if (this.cliente.nome.trim()) {
                 if (this.cliente.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        const res = await axios.put(`http://34.205.37.71:8080/api/cliente/${this.cliente.id}`, this.cliente);
+                        const res = await axios.put(`${this.url}${this.cliente.id}`, this.cliente);
                         this.clientes[this.findIndexById(this.cliente.id)] = this.cliente;
 
                         this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Cliente ${this.cliente.nome} atualizado com sucesso`, life: 3000 });
@@ -193,7 +193,7 @@ export default {
                 else { // Cadastro
                     try {
                         const response = await axios.post(
-                            "http://34.205.37.71:8080/api/cliente",
+                            this.url,
                             this.cliente
                         );
                         // Captura o id criado pelo banco e alimenta o objeto
@@ -239,7 +239,7 @@ export default {
         async deleteCliente() {
             try {
                 const response = await axios.delete(
-                    `http://34.205.37.71:8080/api/cliente/${this.cliente.id}`
+                    `${this.url}${this.cliente.id}`
                 );
                 this.clientes = this.clientes.filter(
                     (val) => val.id !== this.cliente.id
@@ -274,9 +274,8 @@ export default {
                     clientesIds.push(e.id);
                 });
 
-                console.log(clientesIds);
                 const response = await axios.delete(
-                    "http://34.205.37.71:8080/api/cliente", { data: clientesIds }
+                    this.url, { data: clientesIds }
                 );
 
                 this.clientes = this.clientes.filter(
@@ -341,5 +340,17 @@ export default {
 <style scoped>
 .field {
     margin-bottom: 15px;
+}
+
+td>button.editar {
+    color: white;
+    background: #ffb600;
+    border: #ffb600;
+}
+
+td>button.excluir {
+    color: white;
+    background: #D32F2F;
+    border: #D32F2F;
 }
 </style>

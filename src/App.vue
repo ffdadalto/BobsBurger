@@ -31,20 +31,16 @@ export default {
 
 :root {
   --cor-header: #2f4550;
-  --cor-menu: #586f7c;
+  --cor-menu-pri: #586f7c;
+  --cor-menu-sec: #6894ad;
   --cor-content: #f4f4f9;
   --cor-container: #fbfefb;
-  --cor-rodape: #000000;
+  --cor-rodape: #212f36;
 
   --cor-letra-menu: #e5eef3;
   --cor-letra-admin: black;
   --cor-letra-titulo: #2f4550;
   --cor-letra-rodape: white;
-
-  /* --cor-header: #415a77;  
-  --cor-menu: #778da9;  
-  --cor-content: #e0e1dd;  
-  --cor-rodape: #0d1b2a;  */
 
   --header-height: 150px;
   --footer-height: 180px;
@@ -57,6 +53,8 @@ export default {
   margin: 0;
   padding: 0;
   font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
@@ -78,8 +76,8 @@ header {
   box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.75);
 }
 
-aside {  
-  background-color: var(--cor-menu);
+aside {
+  background: linear-gradient(to right, var(--cor-menu-pri), var(--cor-menu-sec));
   grid-area: menu-lateral;
   width: var(--menu-with);
 }
