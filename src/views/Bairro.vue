@@ -16,7 +16,7 @@
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
-            <Column field="cidadeId" header="Cidade"></Column>
+            <Column field="Cidade.nome" header="Cidade"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
@@ -31,13 +31,23 @@
         <Dialog v-model:visible="bairroDialog" :style="{ width: '550px' }" header="Cadastro de bairros" :modal="true"
             class="p-fluid">
             <div class="formgrid grid">
-                <div class="field col-6">
-                    <label for="nome">Nome do Bairro</label>
+                <div class="field col-12">
+                    <label for="cidade">Cidade</label>
+                    <AutoComplete v-model="cidadeSelecionada" :suggestions="cidadesFiltradas"
+                        @complete="procurarCidade($event)" :dropdown="true" field="nome" forceSelection>
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
+                    <small class="p-error" v-if="submitted && !cidadeSelecionada">Cidade é obrigatório</small>
+                </div>
+                <div class="field col-12">
+                    <label for="nome">Nome</label>
                     <InputText id="nome" v-model.trim="bairro.nome" required="true" autofocus
                         :class="{ 'p-invalid': submitted && !bairro.nome }" />
-                    <small class="p-error" v-if="submitted && !bairro.nome">Name is required.</small>
+                    <small class="p-error" v-if="submitted && !bairro.nome">Nome é obrigatório.</small>
                 </div>
-                <div class="field col-6">
+                <div class="field">
                     <label class="mb-3">Situação</label>
                     <div class="field-radiobutton col-4">
                         <RadioButton id="ativo" name="situacao" value="1" v-model="bairro.ativo" />
@@ -49,7 +59,6 @@
                     </div>
                 </div>
             </div>
-
             <template #footer>
                 <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
                 <Button label="Salvar" icon="pi pi-check" class="p-button-text" @click="salvarBairro" />
@@ -89,6 +98,7 @@
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
 import { baseApiUrl } from "@/global";
+import { FilterService, FilterMatchMode } from 'primevue/api';
 
 const axios = require("axios");
 
@@ -107,7 +117,10 @@ export default {
             deleteBairrosDialog: false,
             deleteBairroDialog: false,
             selectedBairros: null,
-            url: `${baseApiUrl}/bairro/`
+            url: `${baseApiUrl}/bairro/`,
+            cidadeSelecionada: null,
+            cidadesFiltradas: [],
+            cidades: []
         };
     },
     methods: {
@@ -133,68 +146,72 @@ export default {
                 this.deleteBairroDialog = true;
             } // Caso tiver mais de um selecionado, abre o pop up de delação de varios bairros
             else this.deleteBairrosDialog = true;
-        },        
+        },
         hideDialog() {
             this.bairroDialog = false;
             this.submitted = false;
         },
         async salvarBairro() {
             this.submitted = true;
-            if (this.bairro.nome.trim()) {
-                if (this.bairro.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
-                    try {
-                        const res = await axios.put(`${this.url}${this.bairro.id}`, this.bairro);
-                        this.bairros[this.findIndexById(this.bairro.id)] = this.bairro;
+            if (this.bairro.nome && this.cidadeSelecionada) {
+                if (this.bairro.nome.trim()) {
+                    if (this.bairro.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                        try {
+                            this.bairro.Cidade = { ...this.cidadeSelecionada };
+                            const res = await axios.put(`${this.url}${this.bairro.id}`, this.bairro);
+                            this.bairros[this.findIndexById(this.bairro.id)] = this.bairro;
 
-                        this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Bairro ${this.bairro.nome} atualizado com sucesso`, life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Bairro ${this.bairro.nome} atualizado com sucesso`, life: 3000 });
 
-                        this.bairroDialog = false; // Fecha o pop up
-                        this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                            this.bairroDialog = false; // Fecha o pop up
+                            this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        }
+                        catch (error) {
+                            console.error(error);
+                            this.$toast.add({
+                                severity: "error",
+                                summary: "Erro",
+                                detail: `Não foi possível atualizar o bairro ${this.bairro.nome}. Erro: ${error}`,
+                                life: 3000,
+                            });
+                        } finally {
+                            this.loading = false;
+                        }
                     }
-                    catch (error) {
-                        console.error(error);
-                        this.$toast.add({
-                            severity: "error",
-                            summary: "Erro",
-                            detail: `Não foi possível atualizar o bairro ${this.bairro.nome}. Erro: ${error}`,
-                            life: 3000,
-                        });
-                    } finally {
-                        this.loading = false;
-                    }
-                }
-                else { // Cadastro
-                    try {
-                        const response = await axios.post(
-                            this.url,
-                            this.bairro
-                        );
-                        // Captura o id criado pelo banco e alimenta o objeto
-                        this.bairro.id = response.data.id;
+                    else { // Cadastro
+                        try {
+                            this.bairro.Cidade = { ...this.cidadeSelecionada }; // Liga a cidade escolhia ao Bairro
 
-                        // Captura o datetime now criado pelo controller e alimenta o objeto
-                        this.bairro.dataCadastro = response.data.dataCadastro;
+                            const response = await axios.post(this.url, this.bairro);
 
-                        this.$toast.add({
-                            severity: "success",
-                            summary: "Sucesso",
-                            detail: `Bairro ${this.bairro.id} - ${this.bairro.nome} Cadastrado com sucesso`,
-                            life: 3000,
-                        });
+                            // Captura o id criado pelo banco e alimenta o objeto
+                            this.bairro.id = response.data.id;
 
-                        this.bairroDialog = false; // Fecha o pop up
-                        this.bairros.push(this.bairro); // Adiciona o objeto criado e atualizado na lista
-                        this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                    } catch (error) {
-                        console.error(error);
-                        this.$toast.add({
-                            severity: "error",
-                            summary: "Erro no cadastro",
-                            detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}. Erro: ${error}`,
-                            life: 3000,
-                        });
-                    } finally {
-                        this.loading = false;
+                            // Captura o datetime now criado pelo controller e alimenta o objeto
+                            this.bairro.dataCadastro = response.data.dataCadastro;
+
+                            this.$toast.add({
+                                severity: "success",
+                                summary: "Sucesso",
+                                detail: `Bairro ${this.bairro.id} - ${this.bairro.nome} Cadastrado com sucesso`,
+                                life: 3000,
+                            });
+
+                            this.bairroDialog = false; // Fecha o pop up
+                            this.bairros.push(this.bairro); // Adiciona o objeto criado e atualizado na lista
+                            this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                            this.cidadeSelecionada = {} // Limpa o objeto pra na proxima abertura do pop up 
+                        } catch (error) {
+                            console.error(error);
+                            this.$toast.add({
+                                severity: "error",
+                                summary: "Erro no cadastro",
+                                detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}. Erro: ${error}`,
+                                life: 3000,
+                            });
+                        } finally {
+                            this.loading = false;
+                        }
                     }
                 }
             }
@@ -287,10 +304,47 @@ export default {
 
             return index;
         },
+        procurarCidade(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.cidadesFiltradas = [...this.cidades];
+                }
+                else {
+                    this.cidadesFiltradas = this.cidades.filter((cidade) => {
+                        return cidade.nome.toLowerCase().startsWith(event.query.toLowerCase());
+                    });
+                }
+            }, 250);
+        },
+        async getCidades() {
+            try {
+                const response = await axios.get(`${baseApiUrl}/cidade/`);
+                this.cidades = response.data;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        searchItems(event) {
+            //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+            let query = event.query;
+            let filteredItems = [];
+
+            for (let i = 0; i < this.cidades.length; i++) {
+                let item = this.items[i];
+                if (item.label.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+                    filteredItems.push(item);
+                }
+            }
+
+            this.cidadesFiltradas = filteredItems;
+        }
     },
     mounted() {
         this.loading = true;
         this.getBairros();
+        this.getCidades();
     },
 };
 </script>
