@@ -16,7 +16,7 @@
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
-            <Column field="Cidade.nome" header="Cidade"></Column>
+            <Column field="cidade.nome" header="Cidade"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
@@ -153,18 +153,21 @@ export default {
         },
         async salvarBairro() {
             this.submitted = true;
-            if (this.bairro.nome && this.cidadeSelecionada) {
+            if (this.bairro.nome && this.cidadeSelecionada) { // Validação
                 if (this.bairro.nome.trim()) {
                     if (this.bairro.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                         try {
-                            this.bairro.Cidade = { ...this.cidadeSelecionada };
+                            this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
+
                             const res = await axios.put(`${this.url}${this.bairro.id}`, this.bairro);
-                            this.bairros[this.findIndexById(this.bairro.id)] = this.bairro;
+                            
+                            this.getBairros(); // Refresh na lista
 
                             this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Bairro ${this.bairro.nome} atualizado com sucesso`, life: 3000 });
 
                             this.bairroDialog = false; // Fecha o pop up
                             this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                            this.cidadeSelecionada = {} // Limpa o objeto pra na proxima abertura do pop up 
                         }
                         catch (error) {
                             console.error(error);
@@ -180,15 +183,9 @@ export default {
                     }
                     else { // Cadastro
                         try {
-                            this.bairro.Cidade = { ...this.cidadeSelecionada }; // Liga a cidade escolhia ao Bairro
+                            this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
 
                             const response = await axios.post(this.url, this.bairro);
-
-                            // Captura o id criado pelo banco e alimenta o objeto
-                            this.bairro.id = response.data.id;
-
-                            // Captura o datetime now criado pelo controller e alimenta o objeto
-                            this.bairro.dataCadastro = response.data.dataCadastro;
 
                             this.$toast.add({
                                 severity: "success",
@@ -197,10 +194,12 @@ export default {
                                 life: 3000,
                             });
 
-                            this.bairroDialog = false; // Fecha o pop up
-                            this.bairros.push(this.bairro); // Adiciona o objeto criado e atualizado na lista
+                            this.getBairros(); // Refresh na lista
+
+                            this.bairroDialog = false; // Fecha o pop up                            
                             this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
                             this.cidadeSelecionada = {} // Limpa o objeto pra na proxima abertura do pop up 
+
                         } catch (error) {
                             console.error(error);
                             this.$toast.add({
