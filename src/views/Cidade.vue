@@ -15,8 +15,7 @@
             currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} cidades">
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>
-            <Column field="cidadeId" header="Cidade"></Column>
+            <Column field="nome" header="Nome" :sortable="true"></Column>            
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
