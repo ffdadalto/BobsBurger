@@ -17,6 +17,16 @@
         </router-link>
       </li>
       <li>
+        <router-link to="/Bairro" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-map-marker"></i>Bairros</div>
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/Cidade" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-map"></i>Cidades</div>
+        </router-link>
+      </li>
+      <li>
         <router-link to="/Sobre" custom v-slot="{ navigate }">
           <div class="div-menu" role="link" @click="navigate"><i class="pi pi-info-circle"></i>Sobre</div>
         </router-link>
