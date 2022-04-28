@@ -160,10 +160,10 @@ export default {
                             this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
 
                             const res = await axios.put(`${this.url}${this.bairro.id}`, this.bairro);
-                            
+
                             this.getBairros(); // Refresh na lista
 
-                            this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Bairro ${this.bairro.nome} atualizado com sucesso`, life: 3000 });
+                            this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Bairro ${this.bairro.nome} atualizado com sucesso!`, life: 3000 });
 
                             this.bairroDialog = false; // Fecha o pop up
                             this.bairro = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
@@ -174,7 +174,7 @@ export default {
                             this.$toast.add({
                                 severity: "error",
                                 summary: "Erro",
-                                detail: `Não foi possível atualizar o bairro ${this.bairro.nome}. Erro: ${error}`,
+                                detail: `Não foi possível atualizar o bairro ${this.bairro.nome}!. Erro: ${error}`,
                                 life: 3000,
                             });
                         } finally {
@@ -190,7 +190,7 @@ export default {
                             this.$toast.add({
                                 severity: "success",
                                 summary: "Sucesso",
-                                detail: `Bairro ${this.bairro.id} - ${this.bairro.nome} Cadastrado com sucesso`,
+                                detail: `Bairro ${this.bairro.nome} Cadastrado com sucesso!`,
                                 life: 3000,
                             });
 
@@ -205,7 +205,7 @@ export default {
                             this.$toast.add({
                                 severity: "error",
                                 summary: "Erro no cadastro",
-                                detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}. Erro: ${error}`,
+                                detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}! Erro: ${error}`,
                                 life: 3000,
                             });
                         } finally {
@@ -227,7 +227,7 @@ export default {
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    detail: `Bairro ${this.bairro.nome} excluído do sistema`,
+                    detail: `Bairro ${this.bairro.nome} excluído do sistema!`,
                     life: 3000,
                 });
                 this.bairro = {};
@@ -237,7 +237,7 @@ export default {
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro no cadastro",
-                    detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}. Erro: ${error}`,
+                    detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}! Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
@@ -279,7 +279,7 @@ export default {
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: `Não foi possível excluir os bairros selecionados. Erro: ${error}`,
+                    detail: `Não foi possível excluir os bairros selecionados! Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
@@ -324,20 +324,6 @@ export default {
             } finally {
                 this.loading = false;
             }
-        },
-        searchItems(event) {
-            //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-            let query = event.query;
-            let filteredItems = [];
-
-            for (let i = 0; i < this.cidades.length; i++) {
-                let item = this.items[i];
-                if (item.label.toLowerCase().indexOf(query.toLowerCase()) === 0) {
-                    filteredItems.push(item);
-                }
-            }
-
-            this.cidadesFiltradas = filteredItems;
         }
     },
     mounted() {
@@ -348,5 +334,26 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.editar {
+    color: white;
+    background: #ffc107;
+    border: #ffc107;
+}
+
+td>button.editar:hover {
+    background: #e0a100;
+    border: #e0a100;
+}
+
+.excluir {
+    color: white;
+    background: #dc3545;
+    border: #dc3545;
+}
+
+td>button.excluir:hover {
+    background: #ad2626;
+    border: #ad2626;
+}
 </style>

@@ -20,8 +20,8 @@
             <Column field="cep" header="CEP"></Column>
             <Column field="endereco" header="Endereço"></Column>
             <Column field="numero" header="Número"></Column>
-            <Column field="bairro" header="Bairro"></Column>
-            <Column field="cidade" header="Cidade"></Column>
+            <Column field="bairro.nome" header="Bairro"></Column>
+            <Column field="bairro.cidade.nome" header="Cidade"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
@@ -41,13 +41,13 @@
                     <label for="nome">Nome Completo</label>
                     <InputText id="nome" v-model.trim="cliente.nome" required="true" autofocus
                         :class="{ 'p-invalid': submitted && !cliente.nome }" />
-                    <small class="p-error" v-if="submitted && !cliente.nome">Name is required.</small>
+                    <small class="p-error" v-if="submitted && !cliente.nome">Obrigatório.</small>
                 </div>
                 <div class="field col-4">
                     <label for="telefone">Telefone</label>
                     <InputText id="telefone" v-model.trim="cliente.telefone" required="true"
                         :class="{ 'p-invalid': submitted && !cliente.telefone }" />
-                    <small class="p-error" v-if="submitted && !cliente.telefone">Telefone é Obrigatório.</small>
+                    <small class="p-error" v-if="submitted && !cliente.telefone">Obrigatório.</small>
                 </div>
                 <div class="field col-3">
                     <label for="cep">CEP</label>
@@ -66,12 +66,28 @@
                     <InputText id="complemento" v-model.trim="cliente.complemento" />
                 </div>
                 <div class="field col-6">
-                    <label for="bairro">Bairro</label>
-                    <InputText id="bairro" v-model.trim="cliente.bairro" />
+                    <label for="cidade">Cidade</label>
+                    <AutoComplete v-model="cidadeSelecionada" :suggestions="cidadesFiltradas"
+                        @complete="procurarCidade($event)" :dropdown="true" field="nome" forceSelection
+                        :class="{ 'p-invalid': submitted && !cidadeSelecionada }" placeholder="Selecione uma cidade"
+                        autoHighlight>
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
+                    <small class="p-error" v-if="submitted && !cidadeSelecionada">Obrigatório.</small>
                 </div>
                 <div class="field col-6">
-                    <label for="cidade">Cidade</label>
-                    <InputText id="cidade" v-model.trim="cliente.cidade" />
+                    <label for="bairro">Bairro</label>
+                    <AutoComplete v-model="bairroSelecionado" :suggestions="bairrosFiltrados"
+                        @complete="procurarBairro($event)" :dropdown="true" field="nome" forceSelection
+                        :class="{ 'p-invalid': submitted && !cidadeSelecionada }" placeholder="Selecione um bairro"
+                        autoHighlight>
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
+                    <small class="p-error" v-if="submitted && !bairroSelecionado">Obrigatório.</small>
                 </div>
 
                 <div class="field col-12">
@@ -142,7 +158,13 @@ export default {
             deleteClientesDialog: false,
             deleteClienteDialog: false,
             selectedClientes: null,
-            url: `${baseApiUrl}/cliente/`
+            url: `${baseApiUrl}/cliente/`,
+            cidadeSelecionada: null,
+            cidadesFiltradas: [],
+            cidades: [],
+            bairroSelecionado: null,
+            bairrosFiltrados: [],
+            bairros: []
         };
     },
     methods: {
@@ -158,6 +180,8 @@ export default {
         },
         abrirNovo() {
             this.cliente = {};
+            // this.cidadeSelecionada = this.cidades[0];
+            // this.bairroSelecionado = this.cidades[0].bairros[0];
             this.submitted = false;
             this.clienteDialog = true;
         },
@@ -167,11 +191,15 @@ export default {
         },
         async salvarCliente() {
             this.submitted = true;
-            if (this.cliente.nome.trim()) {
+            if (this.cliente.nome && this.cliente.nome.trim()) {
                 if (this.cliente.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        const res = await axios.put(`${this.url}${this.cliente.id}`, this.cliente);
-                        this.clientes[this.findIndexById(this.cliente.id)] = this.cliente;
+                        if (this.bairroSelecionado)
+                            this.cliente.bairroId = this.bairroSelecionado.id;
+
+                        await axios.put(`${this.url}${this.cliente.id}`, this.cliente);
+
+                        this.getClientes(); // Refresh na lista                        
 
                         this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Cliente ${this.cliente.nome} atualizado com sucesso`, life: 3000 });
 
@@ -192,25 +220,24 @@ export default {
                 }
                 else { // Cadastro
                     try {
-                        const response = await axios.post(
+                        if (this.bairroSelecionado)
+                            this.cliente.bairroId = this.bairroSelecionado.id;
+
+                        await axios.post(
                             this.url,
                             this.cliente
                         );
-                        // Captura o id criado pelo banco e alimenta o objeto
-                        this.cliente.id = response.data.id;
 
-                        // Captura o datetime now criado pelo controller e alimenta o objeto
-                        this.cliente.dataCadastro = response.data.dataCadastro;
+                        this.getClientes(); // Refresh na lista
 
                         this.$toast.add({
                             severity: "success",
                             summary: "Sucesso",
-                            detail: `Cliente ${this.cliente.id} - ${this.cliente.nome} Cadastrado com sucesso`,
+                            detail: `Cliente ${this.cliente.nome} Cadastrado com sucesso`,
                             life: 3000,
                         });
 
-                        this.clienteDialog = false; // Fecha o pop up
-                        this.clientes.push(this.cliente); // Adiciona o objeto criado e atualizado na lista
+                        this.clienteDialog = false; // Fecha o pop up                        
                         this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
                     } catch (error) {
                         console.error(error);
@@ -304,9 +331,15 @@ export default {
                 this.loading = false;
             }
         },
-        editCliente(cliente) {
+        async editCliente(cliente) {
             this.cliente = { ...cliente };
             this.cliente.ativo = cliente.ativo ? '1' : '0';
+            this.bairroSelecionado = { ...cliente.bairro };
+
+            const response = await axios.get(`${baseApiUrl}/cidade/${this.cliente.bairro.cidade.id}`);
+            this.cidadeSelecionada = response.data;
+
+            // this.cidadeSelecionada = this.cliente.bairro.cidade;
 
             //Condição pra tirar um warning do console
             if (cliente.numero != null)
@@ -329,10 +362,53 @@ export default {
             this.cliente = cliente;
             this.deleteClienteDialog = true;
         },
+        procurarCidade(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.cidadesFiltradas = [...this.cidades];
+                }
+                else {
+                    this.cidadesFiltradas = this.cidades.filter((cidade) => {
+                        return cidade.nome.toLowerCase().startsWith(event.query.toLowerCase());
+                    });
+                }
+            }, 250);
+        },
+        async getCidades() {
+            try {
+                const response = await axios.get(`${baseApiUrl}/cidade/`);
+                this.cidades = response.data;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        procurarBairro(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.bairrosFiltrados = [...this.bairros];
+                }
+                else {
+                    this.bairrosFiltrados = this.bairros.filter((bairro) => {
+                        return bairro.nome.toLowerCase().startsWith(event.query.toLowerCase());
+                    });
+                }
+            }, 250);
+        },
+        getBairros() {
+            this.bairros = this.cidadeSelecionada.bairros;
+        },
     },
     mounted() {
         this.loading = true;
         this.getClientes();
+        this.getCidades();
+    },
+    watch: {
+        cidadeSelecionada() {
+            this.getBairros();
+        }
     },
 };
 </script>

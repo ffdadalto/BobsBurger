@@ -15,7 +15,7 @@
             currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} cidades">
             <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>            
+            <Column field="nome" header="Nome" :sortable="true"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column :exportable="false" style="min-width:8rem">
                 <template #body="slotProps">
@@ -132,7 +132,7 @@ export default {
                 this.deleteCidadeDialog = true;
             } // Caso tiver mais de um selecionado, abre o pop up de delação de varios cidades
             else this.deleteCidadesDialog = true;
-        },        
+        },
         hideDialog() {
             this.cidadeDialog = false;
             this.submitted = false;
@@ -294,5 +294,26 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.editar {
+    color: white;
+    background: #ffc107;
+    border: #ffc107;
+}
+
+td>button.editar:hover {
+    background: #e0a100;
+    border: #e0a100;
+}
+
+.excluir {
+    color: white;
+    background: #dc3545;
+    border: #dc3545;
+}
+
+td>button.excluir:hover {
+    background: #ad2626;
+    border: #ad2626;
+}
 </style>
