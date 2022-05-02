@@ -98,7 +98,6 @@
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
 import { baseApiUrl } from "@/global";
-import { FilterService, FilterMatchMode } from 'primevue/api';
 
 const axios = require("axios");
 
