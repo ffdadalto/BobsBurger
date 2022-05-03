@@ -3,17 +3,40 @@
     <div class="container-fluid">
         <Toolbar class="mb-4">
             <template #start>
-                <Button label="Novo" icon="pi pi-plus" class="p-button-success mr-2" @click="abrirNovo" />
-                <Button label="Excuir" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                    :disabled="!selectedClientes || !selectedClientes.length" />
+                <Button
+                    label="Novo"
+                    icon="pi pi-plus"
+                    class="p-button-success mr-2"
+                    @click="abrirNovo"
+                />
+                <Button
+                    label="Excuir"
+                    icon="pi pi-trash"
+                    class="p-button-danger"
+                    @click="confirmDeleteSelected"
+                    :disabled="!selectedClientes || !selectedClientes.length"
+                />
             </template>
         </Toolbar>
-        <DataTable :value="clientes" responsiveLayout="scroll" v-model:selection="selectedClientes" dataKey="id"
-            class="p-datatable-sm" stripedRows :loading="loading" :paginator="true" :rows="10"
+        <DataTable
+            :value="clientes"
+            responsiveLayout="scroll"
+            v-model:selection="selectedClientes"
+            dataKey="id"
+            class="p-datatable-sm"
+            stripedRows
+            :loading="loading"
+            :paginator="true"
+            :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} clientes">
-            <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} clientes"
+        >
+            <Column
+                selectionMode="multiple"
+                style="width: 3rem"
+                :exportable="false"
+            ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
             <Column field="telefone" header="Telefone"></Column>
@@ -21,33 +44,56 @@
             <Column field="endereco" header="Endereço"></Column>
             <Column field="numero" header="Número"></Column>
             <Column field="bairro.nome" header="Bairro"></Column>
-            <Column field="bairro.cidade.nome" header="Cidade"></Column>
+            <Column field="cidade.nome" header="Cidade"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
-            <Column :exportable="false" style="min-width:8rem">
+            <Column :exportable="false" style="min-width: 8rem">
                 <template #body="slotProps">
-                    <Button icon="pi pi-pencil" class="p-button-rounded mr-2 editar"
-                        @click="editCliente(slotProps.data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded excluir"
-                        @click="confirmDeleteCliente(slotProps.data)" />
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-rounded mr-2 editar"
+                        @click="editCliente(slotProps.data)"
+                    />
+                    <Button
+                        icon="pi pi-trash"
+                        class="p-button-rounded excluir"
+                        @click="confirmDeleteCliente(slotProps.data)"
+                    />
                 </template>
             </Column>
         </DataTable>
 
-
-        <Dialog v-model:visible="clienteDialog" :style="{ width: '550px' }" header="Cadastro de clientes" :modal="true"
-            class="p-fluid">
+        <Dialog
+            v-model:visible="clienteDialog"
+            :style="{ width: '550px' }"
+            header="Cadastro de clientes"
+            :modal="true"
+            class="p-fluid"
+        >
             <div class="formgrid grid">
                 <div class="field col-5">
                     <label for="nome">Nome Completo</label>
-                    <InputText id="nome" v-model.trim="cliente.nome" required="true" autofocus
-                        :class="{ 'p-invalid': submitted && !cliente.nome }" />
-                    <small class="p-error" v-if="submitted && !cliente.nome">Obrigatório.</small>
+                    <InputText
+                        id="nome"
+                        v-model.trim="cliente.nome"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !cliente.nome }"
+                    />
+                    <small class="p-error" v-if="submitted && !cliente.nome"
+                        >Obrigatório.</small
+                    >
                 </div>
                 <div class="field col-4">
                     <label for="telefone">Telefone</label>
-                    <InputText id="telefone" v-model.trim="cliente.telefone" required="true"
-                        :class="{ 'p-invalid': submitted && !cliente.telefone }" />
-                    <small class="p-error" v-if="submitted && !cliente.telefone">Obrigatório.</small>
+                    <InputText
+                        id="telefone"
+                        v-model.trim="cliente.telefone"
+                        required="true"
+                        :class="{ 'p-invalid': submitted && !cliente.telefone }"
+                    />
+                    <small class="p-error" v-if="submitted && !cliente.telefone"
+                        >Obrigatório.</small
+                    >
                 </div>
                 <div class="field col-3">
                     <label for="cep">CEP</label>
@@ -59,78 +105,174 @@
                 </div>
                 <div class="field col-2">
                     <label for="numero">Número</label>
-                    <InputNumber id="numero" v-model="cliente.numero" integeronly></InputNumber>
+                    <InputNumber
+                        id="numero"
+                        v-model="cliente.numero"
+                        integeronly
+                    ></InputNumber>
                 </div>
                 <div class="field col-3">
                     <label for="complemento">Complemento</label>
-                    <InputText id="complemento" v-model.trim="cliente.complemento" />
+                    <InputText
+                        id="complemento"
+                        v-model.trim="cliente.complemento"
+                    />
                 </div>
                 <div class="field col-6">
                     <label for="cidade">Cidade</label>
-                    <AutoComplete v-model="cidadeSelecionada" :suggestions="cidadesFiltradas"
-                        @complete="procurarCidade($event)" :dropdown="true" field="nome" forceSelection
-                        :class="{ 'p-invalid': submitted && !cidadeSelecionada }" placeholder="Selecione uma cidade"
-                        autoHighlight>
+                    <AutoComplete
+                        v-model="cidadeSelecionada"
+                        :suggestions="cidadesFiltradas"
+                        @complete="procurarCidade($event)"
+                        :dropdown="true"
+                        field="nome"
+                        forceSelection
+                        :class="{
+                            'p-invalid': submitted && !cidadeSelecionada,
+                        }"
+                        placeholder="Selecione uma cidade"
+                        autoHighlight
+                        @item-select="cidadeEscolhida"
+                    >
                         <template #item="slotProps">
                             <div>{{ slotProps.item.nome }}</div>
                         </template>
                     </AutoComplete>
-                    <small class="p-error" v-if="submitted && !cidadeSelecionada">Obrigatório.</small>
+                    <small
+                        class="p-error"
+                        v-if="submitted && !cidadeSelecionada"
+                        >Obrigatório.</small
+                    >
                 </div>
                 <div class="field col-6">
                     <label for="bairro">Bairro</label>
-                    <AutoComplete v-model="bairroSelecionado" :suggestions="bairrosFiltrados"
-                        @complete="procurarBairro($event)" :dropdown="true" field="nome" forceSelection
-                        :class="{ 'p-invalid': submitted && !cidadeSelecionada }" placeholder="Selecione um bairro"
-                        autoHighlight>
+                    <AutoComplete
+                        v-model="bairroSelecionado"
+                        :suggestions="bairrosFiltrados"
+                        @complete="procurarBairro($event)"
+                        :dropdown="true"
+                        field="nome"
+                        forceSelection
+                        :class="{
+                            'p-invalid': submitted && !bairroSelecionado,
+                        }"
+                        placeholder="Selecione um bairro"
+                        autoHighlight
+                    >
                         <template #item="slotProps">
                             <div>{{ slotProps.item.nome }}</div>
                         </template>
                     </AutoComplete>
-                    <small class="p-error" v-if="submitted && !bairroSelecionado">Obrigatório.</small>
+                    <small
+                        class="p-error"
+                        v-if="submitted && !bairroSelecionado"
+                        >Obrigatório.</small
+                    >
                 </div>
 
                 <div class="field col-12">
                     <label class="mb-3">Situação</label>
                     <div class="field-radiobutton col-4">
-                        <RadioButton id="ativo" name="situacao" value="1" v-model="cliente.ativo" />
+                        <RadioButton
+                            id="ativo"
+                            name="situacao"
+                            value="1"
+                            v-model="cliente.ativo"
+                        />
                         <label for="ativo">Ativo</label>
                     </div>
                     <div class="field-radiobutton col-4">
-                        <RadioButton id="inativo" name="situacao" value="0" v-model="cliente.ativo" />
+                        <RadioButton
+                            id="inativo"
+                            name="situacao"
+                            value="0"
+                            v-model="cliente.ativo"
+                        />
                         <label for="inativo">Inativo</label>
                     </div>
                 </div>
             </div>
 
             <template #footer>
-                <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                <Button label="Salvar" icon="pi pi-check" class="p-button-text" @click="salvarCliente" />
+                <Button
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="hideDialog"
+                />
+                <Button
+                    label="Salvar"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="salvarCliente"
+                />
             </template>
         </Dialog>
 
         <!-- Pop up deleção de um unico cliente selecionado -->
-        <Dialog v-model:visible="deleteClienteDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <Dialog
+            v-model:visible="deleteClienteDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
             <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="cliente">Você tem certeza que deseja apagar o cliente
-                    <b>{{ cliente.nome }}</b>?</span>
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="cliente"
+                    >Você tem certeza que deseja apagar o cliente
+                    <b>{{ cliente.nome }}</b
+                    >?</span
+                >
             </div>
             <template #footer>
-                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteClienteDialog = false" />
-                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteCliente" />
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteClienteDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteCliente"
+                />
             </template>
         </Dialog>
 
         <!-- Pop up deleção de varios clientes selecionados -->
-        <Dialog v-model:visible="deleteClientesDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <Dialog
+            v-model:visible="deleteClientesDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
             <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="cliente">Você tem certeza que deseja apagar os clientes selecionados?</span>
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="cliente"
+                    >Você tem certeza que deseja apagar os clientes
+                    selecionados?</span
+                >
             </div>
             <template #footer>
-                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteClientesDialog = false" />
-                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteSelectedClientes" />
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteClientesDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteSelectedClientes"
+                />
             </template>
         </Dialog>
 
@@ -164,7 +306,7 @@ export default {
             cidades: [],
             bairroSelecionado: null,
             bairrosFiltrados: [],
-            bairros: []
+            bairros: [],
         };
     },
     methods: {
@@ -179,34 +321,56 @@ export default {
             }
         },
         abrirNovo() {
-            this.cliente = {};
-            // this.cidadeSelecionada = this.cidades[0];
-            // this.bairroSelecionado = this.cidades[0].bairros[0];
             this.submitted = false;
+            this.cliente = {};
+            this.cliente.ativo = "1";            
             this.clienteDialog = true;
         },
         hideDialog() {
             this.clienteDialog = false;
             this.submitted = false;
+            this.cidadeSelecionada = null;
+            this.bairroSelecionado = null;
         },
         async salvarCliente() {
             this.submitted = true;
-            if (this.cliente.nome && this.cliente.nome.trim()) {
-                if (this.cliente.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+            // Validações
+            if (
+                this.cliente.nome &&
+                this.cliente.nome.trim() &&
+                this.cliente.telefone &&
+                this.cliente.telefone.trim() &&
+                this.cidadeSelecionada &&
+                this.bairroSelecionado
+            ) {
+                // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                if (this.cliente.id) {
                     try {
                         if (this.bairroSelecionado)
                             this.cliente.bairroId = this.bairroSelecionado.id;
 
-                        await axios.put(`${this.url}${this.cliente.id}`, this.cliente);
+                        if (this.cidadeSelecionada)
+                            this.cliente.cidadeId = this.cidadeSelecionada.id;
 
-                        this.getClientes(); // Refresh na lista                        
+                        await axios.put(
+                            `${this.url}${this.cliente.id}`,
+                            this.cliente
+                        );
 
-                        this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Cliente ${this.cliente.nome} atualizado com sucesso`, life: 3000 });
+                        this.getClientes(); // Refresh na lista
+
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Cliente ${this.cliente.nome} atualizado com sucesso`,
+                            life: 3000,
+                        });
 
                         this.clienteDialog = false; // Fecha o pop up
-                        this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                    }
-                    catch (error) {
+                        this.cliente = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        this.cidadeSelecionada = null;
+                        this.bairroSelecionado = null;
+                    } catch (error) {
                         console.error(error);
                         this.$toast.add({
                             severity: "error",
@@ -217,16 +381,16 @@ export default {
                     } finally {
                         this.loading = false;
                     }
-                }
-                else { // Cadastro
+                } else {
+                    // Cadastro
                     try {
                         if (this.bairroSelecionado)
                             this.cliente.bairroId = this.bairroSelecionado.id;
 
-                        await axios.post(
-                            this.url,
-                            this.cliente
-                        );
+                        if (this.cidadeSelecionada)
+                            this.cliente.cidadeId = this.cidadeSelecionada.id;
+
+                        await axios.post(this.url, this.cliente);
 
                         this.getClientes(); // Refresh na lista
 
@@ -237,8 +401,10 @@ export default {
                             life: 3000,
                         });
 
-                        this.clienteDialog = false; // Fecha o pop up                        
-                        this.cliente = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        this.clienteDialog = false; // Fecha o pop up
+                        this.cliente = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        this.cidadeSelecionada = null;
+                        this.bairroSelecionado = null;
                     } catch (error) {
                         console.error(error);
                         this.$toast.add({
@@ -301,9 +467,9 @@ export default {
                     clientesIds.push(e.id);
                 });
 
-                const response = await axios.delete(
-                    this.url, { data: clientesIds }
-                );
+                const response = await axios.delete(this.url, {
+                    data: clientesIds,
+                });
 
                 this.clientes = this.clientes.filter(
                     (val) => !this.selectedClientes.includes(val)
@@ -318,7 +484,6 @@ export default {
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
-
             } catch (error) {
                 console.error(error);
                 this.$toast.add({
@@ -332,31 +497,16 @@ export default {
             }
         },
         async editCliente(cliente) {
-            this.cliente = { ...cliente };
-            this.cliente.ativo = cliente.ativo ? '1' : '0';
-            this.bairroSelecionado = { ...cliente.bairro };
+            this.submitted = false;
+            this.cliente = cliente;
+            this.cliente.ativo = cliente.ativo ? "1" : "0";
+            this.bairroSelecionado = cliente.bairro;
+            this.cidadeSelecionada = cliente.cidade;
 
-            const response = await axios.get(`${baseApiUrl}/cidade/${this.cliente.bairro.cidade.id}`);
-            this.cidadeSelecionada = response.data;
-
-            // this.cidadeSelecionada = this.cliente.bairro.cidade;
-
-            //Condição pra tirar um warning do console
             if (cliente.numero != null)
                 this.cliente.numero = parseInt(cliente.numero);
 
             this.clienteDialog = true;
-        },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.clientes.length; i++) {
-                if (this.clientes[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
         },
         confirmDeleteCliente(cliente) {
             this.cliente = cliente;
@@ -366,10 +516,11 @@ export default {
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.cidadesFiltradas = [...this.cidades];
-                }
-                else {
+                } else {
                     this.cidadesFiltradas = this.cidades.filter((cidade) => {
-                        return cidade.nome.toLowerCase().startsWith(event.query.toLowerCase());
+                        return cidade.nome
+                            .toLowerCase()
+                            .startsWith(event.query.toLowerCase());
                     });
                 }
             }, 250);
@@ -388,27 +539,27 @@ export default {
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.bairrosFiltrados = [...this.bairros];
-                }
-                else {
+                } else {
                     this.bairrosFiltrados = this.bairros.filter((bairro) => {
-                        return bairro.nome.toLowerCase().startsWith(event.query.toLowerCase());
+                        return bairro.nome
+                            .toLowerCase()
+                            .startsWith(event.query.toLowerCase());
                     });
                 }
             }, 250);
         },
-        getBairros() {
+        getBairrosCidade() {
             this.bairros = this.cidadeSelecionada.bairros;
+        },
+        cidadeEscolhida() {
+            this.bairroSelecionado = null;
+            this.getBairrosCidade();
         },
     },
     mounted() {
         this.loading = true;
         this.getClientes();
         this.getCidades();
-    },
-    watch: {
-        cidadeSelecionada() {
-            this.getBairros();
-        }
     },
 };
 </script>
@@ -424,7 +575,7 @@ export default {
     border: #ffc107;
 }
 
-td>button.editar:hover {
+td > button.editar:hover {
     background: #e0a100;
     border: #e0a100;
 }
@@ -435,7 +586,7 @@ td>button.editar:hover {
     border: #dc3545;
 }
 
-td>button.excluir:hover {
+td > button.excluir:hover {
     background: #ad2626;
     border: #ad2626;
 }

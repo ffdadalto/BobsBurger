@@ -39,8 +39,7 @@ export default {
     getNames() {
       let aux = this.bairros.map((v) => {
         return v.nome;
-      });
-      console.log(aux);      
+      });          
     }
   },
   async mounted() {

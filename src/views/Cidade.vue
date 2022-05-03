@@ -3,80 +3,184 @@
     <div class="container-fluid">
         <Toolbar class="mb-4">
             <template #start>
-                <Button label="Novo" icon="pi pi-plus" class="p-button-success mr-2" @click="abrirNovo" />
-                <Button label="Excuir" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
-                    :disabled="!selectedCidades || !selectedCidades.length" />
+                <Button
+                    label="Novo"
+                    icon="pi pi-plus"
+                    class="p-button-success mr-2"
+                    @click="abrirNovo"
+                />
+                <Button
+                    label="Excuir"
+                    icon="pi pi-trash"
+                    class="p-button-danger"
+                    @click="confirmDeleteSelected"
+                    :disabled="!selectedCidades || !selectedCidades.length"
+                />
             </template>
         </Toolbar>
-        <DataTable :value="cidades" responsiveLayout="scroll" v-model:selection="selectedCidades" dataKey="id"
-            class="p-datatable-sm" stripedRows :loading="loading" :paginator="true" :rows="10"
+        <DataTable
+            :value="cidades"
+            responsiveLayout="scroll"
+            v-model:selection="selectedCidades"
+            dataKey="id"
+            class="p-datatable-sm"
+            stripedRows
+            :loading="loading"
+            :paginator="true"
+            :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} cidades">
-            <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} cidades"
+        >
+            <Column
+                selectionMode="multiple"
+                style="width: 3rem"
+                :exportable="false"
+            ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="nome" header="Nome" :sortable="true"></Column>            
+            <Column field="qtdBairros" header="Qtd Bairros"></Column>  
             <Column field="dataCadastro" header="Cadastrado em"></Column>
-            <Column :exportable="false" style="min-width:8rem">
+            <Column :exportable="false" style="min-width: 8rem">
                 <template #body="slotProps">
-                    <Button icon="pi pi-pencil" class="p-button-rounded mr-2 editar"
-                        @click="editCidade(slotProps.data)" />
-                    <Button icon="pi pi-trash" class="p-button-rounded excluir"
-                        @click="confirmDeleteCidade(slotProps.data)" />
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-rounded mr-2 editar"
+                        @click="editCidade(slotProps.data)"
+                    />
+                    <Button
+                        icon="pi pi-trash"
+                        class="p-button-rounded excluir"
+                        @click="confirmDeleteCidade(slotProps.data)"
+                    />
                 </template>
             </Column>
         </DataTable>
 
-        <Dialog v-model:visible="cidadeDialog" :style="{ width: '550px' }" header="Cadastro de cidades" :modal="true"
-            class="p-fluid">
+        <Dialog
+            v-model:visible="cidadeDialog"
+            :style="{ width: '550px' }"
+            header="Cadastro de cidades"
+            :modal="true"
+            class="p-fluid"
+        >
             <div class="formgrid grid">
                 <div class="field col-6">
                     <label for="nome">Nome do Cidade</label>
-                    <InputText id="nome" v-model.trim="cidade.nome" required="true" autofocus
-                        :class="{ 'p-invalid': submitted && !cidade.nome }" />
-                    <small class="p-error" v-if="submitted && !cidade.nome">Name is required.</small>
+                    <InputText
+                        id="nome"
+                        v-model.trim="cidade.nome"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !cidade.nome }"
+                    />
+                    <small class="p-error" v-if="submitted && !cidade.nome"
+                        >Name is required.</small
+                    >
                 </div>
                 <div class="field col-6">
                     <label class="mb-3">Situação</label>
                     <div class="field-radiobutton col-4">
-                        <RadioButton id="ativo" name="situacao" value="1" v-model="cidade.ativo" />
+                        <RadioButton
+                            id="ativo"
+                            name="situacao"
+                            value="1"
+                            v-model="cidade.ativo"
+                        />
                         <label for="ativo">Ativo</label>
                     </div>
                     <div class="field-radiobutton col-4">
-                        <RadioButton id="inativo" name="situacao" value="0" v-model="cidade.ativo" />
+                        <RadioButton
+                            id="inativo"
+                            name="situacao"
+                            value="0"
+                            v-model="cidade.ativo"
+                        />
                         <label for="inativo">Inativo</label>
                     </div>
                 </div>
             </div>
 
             <template #footer>
-                <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-                <Button label="Salvar" icon="pi pi-check" class="p-button-text" @click="salvarCidade" />
+                <Button
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="hideDialog"
+                />
+                <Button
+                    label="Salvar"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="salvarCidade"
+                />
             </template>
         </Dialog>
 
         <!-- Pop up deleção de uma unica cidade selecionado -->
-        <Dialog v-model:visible="deleteCidadeDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <Dialog
+            v-model:visible="deleteCidadeDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
             <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="cidade">Você tem certeza que deseja apagar o cidade
-                    <b>{{ cidade.nome }}</b>?</span>
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="cidade"
+                    >Você tem certeza que deseja apagar o cidade
+                    <b>{{ cidade.nome }}</b
+                    >?</span
+                >
             </div>
             <template #footer>
-                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteCidadeDialog = false" />
-                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteCidade" />
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteCidadeDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteCidade"
+                />
             </template>
         </Dialog>
 
         <!-- Pop up deleção de varias cidades selecionadas -->
-        <Dialog v-model:visible="deleteCidadesDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <Dialog
+            v-model:visible="deleteCidadesDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
             <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span v-if="cidade">Você tem certeza que deseja apagar os cidades selecionados?</span>
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="cidade"
+                    >Você tem certeza que deseja apagar os cidades
+                    selecionados?</span
+                >
             </div>
             <template #footer>
-                <Button label="Não" icon="pi pi-times" class="p-button-text" @click="deleteCidadesDialog = false" />
-                <Button label="Sim" icon="pi pi-check" class="p-button-text" @click="deleteSelectedCidades" />
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteCidadesDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteSelectedCidades"
+                />
             </template>
         </Dialog>
 
@@ -90,7 +194,6 @@ import TituloPagina from "@/components/TituloPagina.vue";
 import { baseApiUrl } from "@/global";
 
 const axios = require("axios");
-
 
 export default {
     name: "Cidade",
@@ -106,12 +209,13 @@ export default {
             deleteCidadesDialog: false,
             deleteCidadeDialog: false,
             selectedCidades: null,
-            url: `${baseApiUrl}/cidade/`
+            url: `${baseApiUrl}/cidade/`,
         };
     },
     methods: {
         abrirNovo() {
             this.cidade = {};
+            this.cidade.ativo = "1";
             this.submitted = false;
             this.cidadeDialog = true;
         },
@@ -140,17 +244,26 @@ export default {
         async salvarCidade() {
             this.submitted = true;
             if (this.cidade.nome.trim()) {
-                if (this.cidade.id) { // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                if (this.cidade.id) {
+                    // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        const res = await axios.put(`${this.url}${this.cidade.id}`, this.cidade);
-                        this.cidades[this.findIndexById(this.cidade.id)] = this.cidade;
+                        await axios.put(
+                            `${this.url}${this.cidade.id}`,
+                            this.cidade
+                        );
+                        
+                        this.getCidades(); // Refresh na lista
 
-                        this.$toast.add({ severity: 'success', summary: 'Sucesso', detail: `Cidade ${this.cidade.nome} atualizado com sucesso`, life: 3000 });
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Cidade ${this.cidade.nome} atualizado com sucesso`,
+                            life: 3000,
+                        });
 
                         this.cidadeDialog = false; // Fecha o pop up
                         this.cidade = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                    }
-                    catch (error) {
+                    } catch (error) {
                         console.error(error);
                         this.$toast.add({
                             severity: "error",
@@ -161,18 +274,15 @@ export default {
                     } finally {
                         this.loading = false;
                     }
-                }
-                else { // Cadastro
+                } else {
+                    // Cadastro
                     try {
                         const response = await axios.post(
                             this.url,
                             this.cidade
                         );
-                        // Captura o id criado pelo banco e alimenta o objeto
-                        this.cidade.id = response.data.id;
 
-                        // Captura o datetime now criado pelo controller e alimenta o objeto
-                        this.cidade.dataCadastro = response.data.dataCadastro;
+                        this.getCidades(); // Refresh na lista
 
                         this.$toast.add({
                             severity: "success",
@@ -182,7 +292,6 @@ export default {
                         });
 
                         this.cidadeDialog = false; // Fecha o pop up
-                        this.cidades.push(this.cidade); // Adiciona o objeto criado e atualizado na lista
                         this.cidade = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
                     } catch (error) {
                         console.error(error);
@@ -239,9 +348,9 @@ export default {
                     cidadesIds.push(e.id);
                 });
 
-                const response = await axios.delete(
-                    this.url, { data: cidadesIds }
-                );
+                const response = await axios.delete(this.url, {
+                    data: cidadesIds,
+                });
 
                 this.cidades = this.cidades.filter(
                     (val) => !this.selectedCidades.includes(val)
@@ -256,7 +365,6 @@ export default {
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
-
             } catch (error) {
                 console.error(error);
                 this.$toast.add({
@@ -271,7 +379,7 @@ export default {
         },
         editCidade(cidade) {
             this.cidade = { ...cidade };
-            this.cidade.ativo = cidade.ativo ? '1' : '0';
+            this.cidade.ativo = cidade.ativo ? "1" : "0";
 
             this.cidadeDialog = true;
         },
@@ -301,7 +409,7 @@ export default {
     border: #ffc107;
 }
 
-td>button.editar:hover {
+td > button.editar:hover {
     background: #e0a100;
     border: #e0a100;
 }
@@ -312,7 +420,7 @@ td>button.editar:hover {
     border: #dc3545;
 }
 
-td>button.excluir:hover {
+td > button.excluir:hover {
     background: #ad2626;
     border: #ad2626;
 }
