@@ -3,12 +3,17 @@
     <ul>
       <li>
         <router-link to="/" custom v-slot="{ navigate }">
-          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-home"></i>Home</div>
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-chart-line"></i>Dashboard</div>
         </router-link>
       </li>
       <li>
         <router-link to="/Pedido" custom v-slot="{ navigate }">
-          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-home"></i>Pedidos</div>
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-list"></i>Pedidos</div>
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/Item" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-shopping-cart"></i>Itens</div>
         </router-link>
       </li>
       <li>

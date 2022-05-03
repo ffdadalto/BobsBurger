@@ -1,5 +1,5 @@
 <template>
-    <TituloPagina titulo="Pagina Clientes"></TituloPagina>
+    <TituloPagina titulo="Lista de  Clientes"></TituloPagina>
     <div class="container-fluid">
         <Toolbar class="mb-4">
             <template #start>
