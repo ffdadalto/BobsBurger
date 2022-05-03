@@ -1,38 +1,425 @@
 <template>
-  <TituloPagina titulo="Lista de Itens"></TituloPagina>
-  <div class="container-fluid">
-  </div>
+    <TituloPagina titulo="Lista de Itens"></TituloPagina>
+    <div class="container-fluid">
+        <Toolbar class="mb-4">
+            <template #start>
+                <Button
+                    label="Novo"
+                    icon="pi pi-plus"
+                    class="p-button-success mr-2"
+                    @click="abrirNovo"
+                />
+                <Button
+                    label="Excuir"
+                    icon="pi pi-trash"
+                    class="p-button-danger"
+                    @click="confirmDeleteSelected"
+                    :disabled="!selectedItens || !selectedItens.length"
+                />
+            </template>
+        </Toolbar>
+        <DataTable
+            :value="itens"
+            responsiveLayout="scroll"
+            v-model:selection="selectedItens"
+            dataKey="id"
+            class="p-datatable-sm"
+            stripedRows
+            :loading="loading"
+            :paginator="true"
+            :rows="10"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+            :rowsPerPageOptions="[10, 20, 40]"
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} itens"
+        >
+            <Column
+                selectionMode="multiple"
+                style="width: 3rem"
+                :exportable="false"
+            ></Column>
+            <Column field="id" header="Id" :sortable="true"></Column>
+            <Column field="nome" header="Nome" :sortable="true"></Column>            
+            <Column field="valor" header="Valor"></Column>  
+            <Column field="dataCadastro" header="Cadastrado em"></Column>
+            <Column :exportable="false" style="min-width: 8rem">
+                <template #body="slotProps">
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-rounded mr-2 editar"
+                        @click="editItem(slotProps.data)"
+                    />
+                    <Button
+                        icon="pi pi-trash"
+                        class="p-button-rounded excluir"
+                        @click="confirmDeleteItem(slotProps.data)"
+                    />
+                </template>
+            </Column>
+        </DataTable>
+
+        <Dialog
+            v-model:visible="itemDialog"
+            :style="{ width: '550px' }"
+            header="Cadastro de itens"
+            :modal="true"
+            class="p-fluid"
+        >
+            <div class="formgrid grid">
+                <div class="field col-6">
+                    <label for="nome">Nome do Item</label>
+                    <InputText
+                        id="nome"
+                        v-model.trim="item.nome"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !item.nome }"
+                    />
+                    <small class="p-error" v-if="submitted && !item.nome"
+                        >Nome é obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
+                    <label for="nome">Valor do Item</label>
+                    <InputText
+                        id="nome"
+                        v-model.trim="item.valor"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !item.valor }"
+                    />
+                    <small class="p-error" v-if="submitted && !item.valor"
+                        >Valor é obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
+                    <label class="mb-3">Situação</label>
+                    <div class="field-radiobutton col-4">
+                        <RadioButton
+                            id="ativo"
+                            name="situacao"
+                            value="1"
+                            v-model="item.ativo"
+                        />
+                        <label for="ativo">Ativo</label>
+                    </div>
+                    <div class="field-radiobutton col-6">
+                        <RadioButton
+                            id="inativo"
+                            name="situacao"
+                            value="0"
+                            v-model="item.ativo"
+                        />
+                        <label for="inativo">Inativo</label>
+                    </div>
+                </div>
+            </div>
+
+            <template #footer>
+                <Button
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="hideDialog"
+                />
+                <Button
+                    label="Salvar"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="salvarItem"
+                />
+            </template>
+        </Dialog>
+
+        <!-- Pop up deleção de uma unica item selecionado -->
+        <Dialog
+            v-model:visible="deleteItemDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="item"
+                    >Você tem certeza que deseja apagar o item
+                    <b>{{ item.nome }}</b
+                    >?</span
+                >
+            </div>
+            <template #footer>
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteItemDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteItem"
+                />
+            </template>
+        </Dialog>
+
+        <!-- Pop up deleção de varios itens selecionadas -->
+        <Dialog
+            v-model:visible="deleteItensDialog"
+            :style="{ width: '450px' }"
+            header="Confirm"
+            :modal="true"
+        >
+            <div class="confirmation-content">
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                />
+                <span v-if="item"
+                    >Você tem certeza que deseja apagar os itens
+                    selecionados?</span
+                >
+            </div>
+            <template #footer>
+                <Button
+                    label="Não"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="deleteItensDialog = false"
+                />
+                <Button
+                    label="Sim"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="deleteSelectedItens"
+                />
+            </template>
+        </Dialog>
+
+        <Toast position="top-center" />
+    </div>
 </template>
+
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
+import { baseApiUrl } from "@/global";
+
+const axios = require("axios");
 
 export default {
-  name: "Item",
-  components: { TituloPagina }
-}
+    name: "Item",
+    components: { TituloPagina },
+    data() {
+        return {
+            itens: [],
+            loading: false,
+            item: {},
+            submitted: false,
+            itemDialog: false,            
+            deleteItensDialog: false,
+            deleteItemDialog: false,
+            selectedItens: null,
+            url: `${baseApiUrl}/item/`,
+        };
+    },
+    methods: {
+        abrirNovo() {
+            this.item = {};
+            this.item.ativo = "1";
+            this.submitted = false;
+            this.itemDialog = true;
+        },
+        async getItens() {
+            try {
+                const response = await axios.get(this.url);
+                this.itens = response.data;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        confirmDeleteSelected() {
+            // Se tiver somente um item selecionado, abre o pop up de deleção de um unico item
+            if (this.selectedItens.length == 1) {
+                this.item = this.selectedItens.shift();
+                this.deleteItemDialog = true;
+            } // Caso tiver mais de um selecionado, abre o pop up de delação de varios itens
+            else this.deleteItensDialog = true;
+        },
+        hideDialog() {
+            this.itemDialog = false;
+            this.submitted = false;
+        },
+        async salvarItem() {
+            this.submitted = true;
+            if (this.item.nome.trim()) {
+                if (this.item.id) {
+                    // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                    try {
+                        await axios.put(
+                            `${this.url}${this.item.id}`,
+                            this.item
+                        );
+                        
+                        this.getItens(); // Refresh na lista
+
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Item ${this.item.nome} atualizado com sucesso`,
+                            life: 3000,
+                        });
+
+                        this.itemDialog = false; // Fecha o pop up
+                        this.item = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro",
+                            detail: `Não foi possível atualizar o item ${this.item.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
+                    }
+                } else {
+                    // Cadastro
+                    try {
+                        const response = await axios.post(
+                            this.url,
+                            this.item
+                        );
+
+                        this.getItens(); // Refresh na lista
+
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Item ${this.item.nome} Cadastrado com sucesso`,
+                            life: 3000,
+                        });
+
+                        this.itemDialog = false; // Fecha o pop up
+                        this.item = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro no cadastro",
+                            detail: `Não foi possível cadastrar o item ${this.item.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        },
+        async deleteItem() {
+            try {
+                const response = await axios.delete(
+                    `${this.url}${this.item.id}`
+                );
+                
+                this.getItens(); // Refresh na lista
+
+                this.deleteItemDialog = false;
+                this.$toast.add({
+                    severity: "success",
+                    summary: "Sucesso",
+                    detail: `Item ${this.item.nome} excluído do sistema`,
+                    life: 3000,
+                });
+                this.item = {};
+                this.selectedItens = null;
+            } catch (error) {
+                console.error(error);
+                this.$toast.add({
+                    severity: "error",
+                    summary: "Erro no cadastro",
+                    detail: `Não foi possível cadastrar o item ${this.item.nome}. Erro: ${error}`,
+                    life: 3000,
+                });
+            } finally {
+                this.loading = false;
+            }
+        },
+        confirmDeleteItem(item) {
+            this.item = item;
+            this.deleteItemDialog = true;
+        },
+        // Metodo para deletar varios clientes
+        async deleteSelectedItens() {
+            try {
+                let itensIds = [];
+                this.selectedItens.forEach((e) => {
+                    itensIds.push(e.id);
+                });
+
+                const response = await axios.delete(this.url, {
+                    data: itensIds,
+                });
+
+                this.getItens(); // Refresh na lista
+
+                this.deleteItensDialog = false;
+                this.selectedItens = null;
+                this.$toast.add({
+                    severity: "success",
+                    summary: "Sucesso",                    
+                    detail: response.data.message, // A mensagem foi definida no controller
+                    life: 3000,
+                });
+            } catch (error) {
+                console.error(error);
+                this.$toast.add({
+                    severity: "error",
+                    summary: "Erro",
+                    detail: `Não foi possível excluir os itens selecionados. Erro: ${error}`,
+                    life: 3000,
+                });
+            } finally {
+                this.loading = false;
+            }
+        },
+        editItem(item) {
+            this.item = item;
+            this.item.ativo = item.ativo ? "1" : "0";
+
+            this.itemDialog = true;
+        },
+    },
+    mounted() {
+        this.loading = true;
+        this.getItens();
+    },
+};
 </script>
 
 <style scoped>
 .editar {
-  color: white;
-  background: #ffc107;
-  border: #ffc107;
+    color: white;
+    background: #ffc107;
+    border: #ffc107;
 }
 
-td>button.editar:hover {
-  background: #e0a100;
-  border: #e0a100;
+td > button.editar:hover {
+    background: #e0a100;
+    border: #e0a100;
 }
 
 .excluir {
-  color: white;
-  background: #dc3545;
-  border: #dc3545;
+    color: white;
+    background: #dc3545;
+    border: #dc3545;
 }
 
-td>button.excluir:hover {
-  background: #ad2626;
-  border: #ad2626;
+td > button.excluir:hover {
+    background: #ad2626;
+    border: #ad2626;
 }
 </style>

@@ -232,7 +232,7 @@ export default {
         confirmDeleteSelected() {
             // Se tiver somente um cidade selecionado, abre o pop up de deleção de um unico cidade
             if (this.selectedCidades.length == 1) {
-                this.cidade = { ...this.selectedCidades[0] };
+                this.cidade = this.selectedCidades.shift();
                 this.deleteCidadeDialog = true;
             } // Caso tiver mais de um selecionado, abre o pop up de delação de varios cidades
             else this.deleteCidadesDialog = true;
@@ -312,9 +312,9 @@ export default {
                 const response = await axios.delete(
                     `${this.url}${this.cidade.id}`
                 );
-                this.cidades = this.cidades.filter(
-                    (val) => val.id !== this.cidade.id
-                );
+                
+                this.getCidades(); // Refresh na lista
+
                 this.deleteCidadeDialog = false;
                 this.$toast.add({
                     severity: "success",
@@ -352,16 +352,13 @@ export default {
                     data: cidadesIds,
                 });
 
-                this.cidades = this.cidades.filter(
-                    (val) => !this.selectedCidades.includes(val)
-                );
+                this.getCidades(); // Refresh na lista
 
                 this.deleteCidadesDialog = false;
                 this.selectedCidades = null;
                 this.$toast.add({
                     severity: "success",
-                    summary: "Sucesso",
-                    // detail: "Os clientes selecionados foram excluídos dos sistema",
+                    summary: "Sucesso",                    
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
@@ -378,21 +375,10 @@ export default {
             }
         },
         editCidade(cidade) {
-            this.cidade = { ...cidade };
+            this.cidade = cidade;
             this.cidade.ativo = cidade.ativo ? "1" : "0";
 
             this.cidadeDialog = true;
-        },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.cidades.length; i++) {
-                if (this.cidades[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
         },
     },
     mounted() {

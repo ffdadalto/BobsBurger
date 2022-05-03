@@ -269,9 +269,9 @@ export default {
         confirmDeleteSelected() {
             // Se tiver somente um pedido selecionado, abre o pop up de deleção de um unico pedido
             if (this.selectedPedidos.length == 1) {
-                this.pedido = { ...this.selectedPedidos[0] };
+                this.pedido = this.selectedPedidos.shift();
                 this.deletePedidoDialog = true;
-            } // Caso tiver mais de um selecionado, abre o pop up de delação de varios pedidos
+            } // Caso tiver mais de um selecionado, abre o pop up de deleção de varios pedidos
             else this.deletePedidosDialog = true;
         },
         hideDialog() {
