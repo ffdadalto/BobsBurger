@@ -42,7 +42,21 @@
             <Column field="valorTotal" header="valorTotal"></Column>
             <Column field="cliente.nome" header="Cliente"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
-            <Column :exportable="false" style="min-width: 8rem">
+            <Column field="ativo" header="Ativo">
+                <template #body="slotProps">
+                    <i
+                        class="pi pi-check-circle green-ativo"
+                        v-if="slotProps.data.ativo"
+                        v-tooltip.top="'Ativo'"
+                    ></i>
+                    <i
+                        class="pi pi-ban red-inativo"
+                        v-else
+                        v-tooltip.top="'Inativo'"
+                    ></i>
+                </template>
+            </Column>
+            <Column :exportable="false" style="min-width: 8rem" header="Ações">
                 <template #body="slotProps">
                     <Button
                         icon="pi pi-pencil"

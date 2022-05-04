@@ -38,10 +38,24 @@
                 :exportable="false"
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>            
-            <Column field="valor" header="Valor"></Column>  
+            <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="valor" header="Valor"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
-            <Column :exportable="false" style="min-width: 8rem">
+            <Column field="ativo" header="Ativo">
+                <template #body="slotProps">
+                    <i
+                        class="pi pi-check-circle green-ativo"
+                        v-if="slotProps.data.ativo"
+                        v-tooltip.top="'Ativo'"
+                    ></i>
+                    <i
+                        class="pi pi-ban red-inativo"
+                        v-else
+                        v-tooltip.top="'Inativo'"
+                    ></i>
+                </template>
+            </Column>
+            <Column :exportable="false" style="min-width: 8rem" header="Ações">
                 <template #body="slotProps">
                     <Button
                         icon="pi pi-pencil"
@@ -217,7 +231,7 @@ export default {
             loading: false,
             item: {},
             submitted: false,
-            itemDialog: false,            
+            itemDialog: false,
             deleteItensDialog: false,
             deleteItemDialog: false,
             selectedItens: null,
@@ -263,7 +277,7 @@ export default {
                             `${this.url}${this.item.id}`,
                             this.item
                         );
-                        
+
                         this.getItens(); // Refresh na lista
 
                         this.$toast.add({
@@ -289,10 +303,7 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(
-                            this.url,
-                            this.item
-                        );
+                        const response = await axios.post(this.url, this.item);
 
                         this.getItens(); // Refresh na lista
 
@@ -324,7 +335,7 @@ export default {
                 const response = await axios.delete(
                     `${this.url}${this.item.id}`
                 );
-                
+
                 this.getItens(); // Refresh na lista
 
                 this.deleteItemDialog = false;
@@ -370,7 +381,7 @@ export default {
                 this.selectedItens = null;
                 this.$toast.add({
                     severity: "success",
-                    summary: "Sucesso",                    
+                    summary: "Sucesso",
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });

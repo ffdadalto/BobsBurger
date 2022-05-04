@@ -16,6 +16,7 @@ import Dialog from 'primevue/dialog';
 import InputNumber from 'primevue/inputnumber';
 import RadioButton from 'primevue/radiobutton';
 import AutoComplete from 'primevue/autocomplete';
+import Tooltip from 'primevue/tooltip';
 
 import 'primevue/resources/themes/saga-blue/theme.css' //theme
 import 'primevue/resources/primevue.min.css' //core css
@@ -38,6 +39,8 @@ app.component('Dialog', Dialog);
 app.component('InputNumber', InputNumber);
 app.component('RadioButton', RadioButton);
 app.component('AutoComplete', AutoComplete);
+
+app.directive('tooltip', Tooltip);
 
 
 app.mount('#app');

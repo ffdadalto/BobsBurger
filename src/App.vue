@@ -110,4 +110,12 @@ footer {
 .p-datatable table {
     font-size: 0.8rem;
 }
+
+.green-ativo {
+    color: #689f38;
+}
+
+.red-inativo {
+    color: #dc3545;
+}
 </style>
