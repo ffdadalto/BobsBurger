@@ -17,6 +17,22 @@
                     :disabled="!selectedCidades || !selectedCidades.length"
                 />
             </template>
+            <template #end>
+                <div class="ativo-radio-button">
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="todos" v-model="filtro" />
+                        <label>Todos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="ativos" v-model="filtro" />
+                        <label>Ativos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="inativos" v-model="filtro" />
+                        <label>Inativos</label>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         <DataTable
             :value="cidades"
@@ -38,8 +54,8 @@
                 :exportable="false"
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>            
-            <Column field="qtdBairros" header="Qtd Bairros"></Column>  
+            <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="qtdBairros" header="Qtd Bairros"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
@@ -224,6 +240,7 @@ export default {
             deleteCidadeDialog: false,
             selectedCidades: null,
             url: `${baseApiUrl}/cidade/`,
+            filtro: "todos",
         };
     },
     methods: {
@@ -234,13 +251,46 @@ export default {
             this.cidadeDialog = true;
         },
         async getCidades() {
-            try {
-                const response = await axios.get(this.url);
-                this.cidades = response.data;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.loading = false;
+            switch (this.filtro) {
+                case "todos":
+                    try {
+                        const response = await axios.get(this.url);
+                        this.cidades = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "ativos":
+                    try {
+                        const response = await axios.get(`${this.url}ativo`);
+                        this.cidades = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "inativos":
+                    try {
+                        const response = await axios.get(`${this.url}inativo`);
+                        this.cidades = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                default:
+                    try {
+                        const response = await axios.get(this.url);
+                        this.cidades = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
             }
         },
         confirmDeleteSelected() {
@@ -265,7 +315,7 @@ export default {
                             `${this.url}${this.cidade.id}`,
                             this.cidade
                         );
-                        
+
                         this.getCidades(); // Refresh na lista
 
                         this.$toast.add({
@@ -326,7 +376,7 @@ export default {
                 const response = await axios.delete(
                     `${this.url}${this.cidade.id}`
                 );
-                
+
                 this.getCidades(); // Refresh na lista
 
                 this.deleteCidadeDialog = false;
@@ -372,7 +422,7 @@ export default {
                 this.selectedCidades = null;
                 this.$toast.add({
                     severity: "success",
-                    summary: "Sucesso",                    
+                    summary: "Sucesso",
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
@@ -398,6 +448,11 @@ export default {
     mounted() {
         this.loading = true;
         this.getCidades();
+    },
+    watch: {
+        filtro() {
+            this.getCidades();
+        },
     },
 };
 </script>

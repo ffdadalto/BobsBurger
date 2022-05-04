@@ -17,6 +17,22 @@
                     :disabled="!selectedBairros || !selectedBairros.length"
                 />
             </template>
+            <template #end>
+                <div class="ativo-radio-button">
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="todos" v-model="filtro" />
+                        <label>Todos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="ativos" v-model="filtro" />
+                        <label>Ativos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="inativos" v-model="filtro" />
+                        <label>Inativos</label>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         <DataTable
             :value="bairros"
@@ -246,6 +262,7 @@ export default {
             cidadeSelecionada: null,
             cidadesFiltradas: [],
             cidades: [],
+            filtro: "todos",
         };
     },
     methods: {
@@ -256,13 +273,46 @@ export default {
             this.bairroDialog = true;
         },
         async getBairros() {
-            try {
-                const response = await axios.get(this.url);
-                this.bairros = response.data;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.loading = false;
+            switch (this.filtro) {
+                case "todos":
+                    try {
+                        const response = await axios.get(this.url);
+                        this.bairros = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "ativos":
+                    try {
+                        const response = await axios.get(`${this.url}ativo`);
+                        this.bairros = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "inativos":
+                    try {
+                        const response = await axios.get(`${this.url}inativo`);
+                        this.bairros = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                default:
+                    try {
+                        const response = await axios.get(this.url);
+                        this.bairros = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
             }
         },
         confirmDeleteSelected() {
@@ -385,7 +435,7 @@ export default {
             this.bairro = bairro;
             this.deleteBairroDialog = true;
         },
-        // Metodo para deletar varios clientes
+        // Metodo para deletar varios bairros
         async deleteSelectedBairros() {
             try {
                 let bairrosIds = [];
@@ -406,7 +456,7 @@ export default {
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    // detail: "Os clientes selecionados foram excluídos dos sistema",
+                    // detail: "Os bairros selecionados foram excluídos dos sistema",
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
@@ -468,6 +518,11 @@ export default {
         this.loading = true;
         this.getBairros();
         this.getCidades();
+    },
+    watch: {
+        filtro() {
+            this.getBairros();
+        },
     },
 };
 </script>

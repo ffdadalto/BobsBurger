@@ -17,6 +17,22 @@
                     :disabled="!selectedItens || !selectedItens.length"
                 />
             </template>
+            <template #end>
+                <div class="ativo-radio-button">
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="todos" v-model="filtro" />
+                        <label>Todos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="ativos" v-model="filtro" />
+                        <label>Ativos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="inativos" v-model="filtro" />
+                        <label>Inativos</label>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         <DataTable
             :value="itens"
@@ -236,6 +252,7 @@ export default {
             deleteItemDialog: false,
             selectedItens: null,
             url: `${baseApiUrl}/item/`,
+            filtro: "todos",
         };
     },
     methods: {
@@ -246,13 +263,46 @@ export default {
             this.itemDialog = true;
         },
         async getItens() {
-            try {
-                const response = await axios.get(this.url);
-                this.itens = response.data;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.loading = false;
+            switch (this.filtro) {
+                case "todos":
+                    try {
+                        const response = await axios.get(this.url);
+                        this.itens = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "ativos":
+                    try {
+                        const response = await axios.get(`${this.url}ativo`);
+                        this.itens = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "inativos":
+                    try {
+                        const response = await axios.get(`${this.url}inativo`);
+                        this.itens = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                default:
+                    try {
+                        const response = await axios.get(this.url);
+                        this.itens = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
             }
         },
         confirmDeleteSelected() {
@@ -407,6 +457,11 @@ export default {
     mounted() {
         this.loading = true;
         this.getItens();
+    },
+    watch: {
+        filtro() {
+            this.getItens();
+        },
     },
 };
 </script>

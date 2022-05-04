@@ -17,6 +17,22 @@
                     :disabled="!selectedClientes || !selectedClientes.length"
                 />
             </template>
+            <template #end>
+                <div class="ativo-radio-button">
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="todos" v-model="filtro" />
+                        <label>Todos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="ativos" v-model="filtro" />
+                        <label>Ativos</label>
+                    </div>
+                    <div class="ativo-radio-button-item">
+                        <RadioButton value="inativos" v-model="filtro" />
+                        <label>Inativos</label>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         <DataTable
             :value="clientes"
@@ -321,17 +337,52 @@ export default {
             bairroSelecionado: null,
             bairrosFiltrados: [],
             bairros: [],
+            somenteAtivos: true,
+            filtro: "todos",
         };
     },
     methods: {
         async getClientes() {
-            try {
-                const response = await axios.get(this.url);
-                this.clientes = response.data;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.loading = false;
+            switch (this.filtro) {
+                case "todos":
+                    try {
+                        const response = await axios.get(this.url);
+                        this.clientes = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "ativos":
+                    try {
+                        const response = await axios.get(`${this.url}ativo`);
+                        this.clientes = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                case "inativos":
+                    try {
+                        const response = await axios.get(`${this.url}inativo`);
+                        this.clientes = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                    break;
+                default:
+                    try {
+                        const response = await axios.get(this.url);
+                        this.clientes = response.data;
+                    } catch (error) {
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
             }
         },
         abrirNovo() {
@@ -574,6 +625,11 @@ export default {
         this.loading = true;
         this.getClientes();
         this.getCidades();
+    },
+    watch: {
+        filtro() {
+            this.getClientes();
+        },
     },
 };
 </script>

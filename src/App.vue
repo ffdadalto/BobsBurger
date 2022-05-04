@@ -118,4 +118,18 @@ footer {
 .red-inativo {
     color: #dc3545;
 }
+
+.ativo-radio-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ativo-radio-button-item {
+    margin-left: 20px;
+}
+
+.ativo-radio-button-item > label {
+    margin-left: 10px;
+}
 </style>
