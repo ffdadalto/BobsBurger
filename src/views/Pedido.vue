@@ -61,12 +61,12 @@
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
                     <i
-                        class="pi pi-check-circle green-ativo"
+                        class="pi pi-check-circle ativo"
                         v-if="slotProps.data.ativo"
                         v-tooltip.top="'Ativo'"
                     ></i>
                     <i
-                        class="pi pi-ban red-inativo"
+                        class="pi pi-ban inativo"
                         v-else
                         v-tooltip.top="'Inativo'"
                     ></i>
@@ -78,11 +78,13 @@
                         icon="pi pi-pencil"
                         class="p-button-rounded mr-2 editar"
                         @click="editPedido(slotProps.data)"
+                        v-tooltip.top="'Editar'"
                     />
                     <Button
                         icon="pi pi-trash"
                         class="p-button-rounded excluir"
                         @click="confirmDeletePedido(slotProps.data)"
+                        v-tooltip.top="'Excluir'"
                     />
                 </template>
             </Column>

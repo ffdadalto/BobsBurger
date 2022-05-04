@@ -111,12 +111,14 @@ footer {
     font-size: 0.8rem;
 }
 
-.green-ativo {
+.ativo {
     color: #689f38;
+    font-weight: 900 !important;
 }
 
-.red-inativo {
+.inativo {
     color: #dc3545;
+    font-weight: 900 !important;
 }
 
 .ativo-radio-button {
