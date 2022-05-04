@@ -32,10 +32,15 @@
         </router-link>
       </li>
       <li>
+        <router-link to="/Configuracao" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-cog"></i>Configurações</div>
+        </router-link>
+      </li>
+      <li>
         <router-link to="/Sobre" custom v-slot="{ navigate }">
           <div class="div-menu" role="link" @click="navigate"><i class="pi pi-info-circle"></i>Sobre</div>
         </router-link>
-      </li>
+      </li>      
     </ul>
   </div>
 </template>

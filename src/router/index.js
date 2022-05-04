@@ -6,8 +6,8 @@ import Item from '../views/Item.vue'
 import Cliente from '../views/Cliente.vue'
 import Bairro from '../views/Bairro.vue'
 import Cidade from '../views/Cidade.vue'
+import Configuracao from '../views/Configuracao.vue'
 import Sobre from '../views/Sobre.vue'
-
 
 const routes = [
     { path: '/', component: Default },
@@ -16,6 +16,7 @@ const routes = [
     { path: '/Cliente', component: Cliente },
     { path: '/Bairro', component: Bairro },
     { path: '/Cidade', component: Cidade },
+    { path: '/Configuracao', component: Configuracao },
     { path: '/Sobre', component: Sobre }
 ]
 
