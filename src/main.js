@@ -18,6 +18,7 @@ import RadioButton from 'primevue/radiobutton';
 import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
 import InputSwitch from 'primevue/inputswitch';
+import Divider from 'primevue/divider';
 
 import 'primevue/resources/themes/saga-blue/theme.css' //theme
 import 'primevue/resources/primevue.min.css' //core css
@@ -41,6 +42,7 @@ app.component('InputNumber', InputNumber);
 app.component('RadioButton', RadioButton);
 app.component('AutoComplete', AutoComplete);
 app.component('InputSwitch', InputSwitch);
+app.component('Divider', Divider);
 
 app.directive('tooltip', Tooltip);
 
