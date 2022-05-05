@@ -60,7 +60,7 @@
                     :disabled="camposDesativados"
                 />
             </div>
-            <div class="field col-12 md:col-2">
+            <div class="field col-12 md:col-3">
                 <label for="Phone">Telefone Fixo</label>
                 <InputMask
                     mask="(99) 9999-9999"
@@ -68,7 +68,7 @@
                     :disabled="camposDesativados"
                 />
             </div>
-            <div class="field col-12 md:col-2">
+            <div class="field col-12 md:col-3">
                 <label for="Phone">Celular/WhatsApp</label>
                 <InputMask
                     mask="(99) 99999-9999"
@@ -76,7 +76,7 @@
                     :disabled="camposDesativados"
                 />
             </div>
-            <div class="field col-12 md:col-2">
+            <div class="field col-12 md:col-3">
                 <label>Horário de Abertura</label>
                 <InputMask
                     mask="99:99"
@@ -85,7 +85,7 @@
                     :disabled="camposDesativados"
                 />
             </div>
-            <div class="field col-12 md:col-2">
+            <div class="field col-12 md:col-3">
                 <label>Horário de Fechamento</label>
                 <InputMask
                     mask="99:99"

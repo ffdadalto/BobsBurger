@@ -40,7 +40,7 @@ export default {
     --cor-letra-menu: #e5eef3;
     --cor-letra-admin: black;
     --cor-letra-titulo: #2f4550;
-    --cor-letra-rodape: white;
+    --cor-letra-rodape: #fbfefbbf;
 
     --header-height: 150px;
     --footer-height: 180px;
