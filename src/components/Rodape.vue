@@ -1,35 +1,38 @@
 <template>
     <div class="rodape">
-        <h1>{{ configuracao.nomeEmpresa }} © {{ anoCorrente }}</h1>
-        <Divider layout="vertical" align="center"> </Divider>
-        <div class="info-empresa">
-            <!-- <p id="titulo">
+        <template v-if="configuracao.id">
+            <h1>{{ configuracao.nomeEmpresa }} © {{ anoCorrente }}</h1>
+            <Divider layout="vertical" align="center"> </Divider>
+            <div class="info-empresa">
+                <!-- <p id="titulo">
                 <b>{{ configuracao.nomeEmpresa }}</b>
             </p> -->
-            <p>
-                <i class="pi pi-map-marker"></i
-                >{{ configuracao.enderecoEmpresa }},
-                {{ configuracao.numeroEmpresa }}
-            </p>
-            <p>
-                <i class="pi pi-map"></i>{{ configuracao.bairroEmpresa }},
-                {{ configuracao.cidadeEmpresa }}, {{ configuracao.ufEmpresa }} -
-                {{ configuracao.cepEmpresa }}
-            </p>
-            <p>
-                <i class="pi pi-phone"></i>Telefone:
-                {{ configuracao.telefoneFixoEmpresa }}
-            </p>
-            <p>
-                <i class="pi pi-whatsapp"></i>WhatsApp:
-                {{ configuracao.telefoneCelEmpresa }}
-            </p>
-            <p>
-                <i class="pi pi-clock"></i>Horario de Atendimento:
-                {{ configuracao.horarioAtendimentoInicial }} às
-                {{ configuracao.horarioAtendimentoFinal }}
-            </p>
-        </div>
+                <p>
+                    <i class="pi pi-map-marker"></i
+                    >{{ configuracao.enderecoEmpresa }},
+                    {{ configuracao.numeroEmpresa }}
+                </p>
+                <p>
+                    <i class="pi pi-map"></i>{{ configuracao.bairroEmpresa }},
+                    {{ configuracao.cidadeEmpresa }},
+                    {{ configuracao.ufEmpresa }} - CEP:
+                    {{ configuracao.cepEmpresa }}
+                </p>
+                <p>
+                    <i class="pi pi-phone"></i>Telefone:
+                    {{ configuracao.telefoneFixoEmpresa }}
+                </p>
+                <p>
+                    <i class="pi pi-whatsapp"></i>WhatsApp:
+                    {{ configuracao.telefoneCelEmpresa }}
+                </p>
+                <p>
+                    <i class="pi pi-clock"></i>Horario de Atendimento:
+                    {{ configuracao.horarioAtendimentoInicial }} às
+                    {{ configuracao.horarioAtendimentoFinal }}
+                </p>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -87,7 +90,7 @@ export default {
 
 /* Barra vertical do rodapé */
 .p-divider-vertical {
-    border: 1px solid white;
+    border: 1px solid var(--cor-letra-rodape);
     margin: 0 50px !important;
 }
 
