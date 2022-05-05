@@ -19,6 +19,9 @@ import AutoComplete from 'primevue/autocomplete';
 import Tooltip from 'primevue/tooltip';
 import InputSwitch from 'primevue/inputswitch';
 import Divider from 'primevue/divider';
+import InputMask from 'primevue/inputmask';
+import Calendar from 'primevue/calendar';
+import Editor from 'primevue/editor';
 
 import 'primevue/resources/themes/saga-blue/theme.css' //theme
 import 'primevue/resources/primevue.min.css' //core css
@@ -43,6 +46,9 @@ app.component('RadioButton', RadioButton);
 app.component('AutoComplete', AutoComplete);
 app.component('InputSwitch', InputSwitch);
 app.component('Divider', Divider);
+app.component('InputMask', InputMask);
+app.component('Calendar', Calendar);
+app.component('Editor', Editor);
 
 app.directive('tooltip', Tooltip);
 
