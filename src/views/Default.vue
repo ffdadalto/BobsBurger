@@ -91,6 +91,9 @@ export default {
                     legend: {
                         labels: {
                             color: "#495057",
+                            font: {
+                                size: 16,
+                            },
                         },
                     },
                 },
