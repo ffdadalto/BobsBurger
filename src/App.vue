@@ -44,7 +44,7 @@ export default {
 
     --header-height: 150px;
     --footer-height: 180px;
-    --menu-with: 250px;
+    --menu-width: 270px;
 }
 
 * {
@@ -59,7 +59,7 @@ export default {
 
 #app {
     display: grid;
-    grid-template-columns: var(--menu-with) 1fr;
+    grid-template-columns: var(--menu-width) 1fr;
     grid-template-rows: var(--header-height) 1fr var(--footer-height);
     grid-template-areas:
         "cabecalho cabecalho"
@@ -83,7 +83,7 @@ aside {
         var(--cor-menu-sec)
     );
     grid-area: menu-lateral;
-    width: var(--menu-with);
+    width: var(--menu-width);
 }
 
 .content {

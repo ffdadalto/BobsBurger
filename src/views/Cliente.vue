@@ -103,7 +103,7 @@
         >
             <div class="formgrid grid">
                 <div class="field col-5">
-                    <label for="nome">Nome Completo</label>
+                    <label>Nome Completo</label>
                     <InputText
                         id="nome"
                         v-model.trim="cliente.nome"
@@ -116,7 +116,7 @@
                     >
                 </div>
                 <div class="field col-4">
-                    <label for="telefone">Telefone</label>
+                    <label>Telefone</label>
                     <InputText
                         id="telefone"
                         v-model.trim="cliente.telefone"
@@ -128,15 +128,15 @@
                     >
                 </div>
                 <div class="field col-3">
-                    <label for="cep">CEP</label>
+                    <label>CEP</label>
                     <InputText id="cep" v-model.trim="cliente.cep" />
                 </div>
                 <div class="field col-7">
-                    <label for="endereco">Endereço</label>
+                    <label>Endereço</label>
                     <InputText id="endereco" v-model.trim="cliente.endereco" />
                 </div>
                 <div class="field col-2">
-                    <label for="numero">Número</label>
+                    <label>Número</label>
                     <InputNumber
                         id="numero"
                         v-model="cliente.numero"
@@ -144,14 +144,14 @@
                     ></InputNumber>
                 </div>
                 <div class="field col-3">
-                    <label for="complemento">Complemento</label>
+                    <label>Complemento</label>
                     <InputText
                         id="complemento"
                         v-model.trim="cliente.complemento"
                     />
                 </div>
                 <div class="field col-6">
-                    <label for="cidade">Cidade</label>
+                    <label>Cidade</label>
                     <AutoComplete
                         v-model="cidadeSelecionada"
                         :suggestions="cidadesFiltradas"
@@ -177,7 +177,7 @@
                     >
                 </div>
                 <div class="field col-6">
-                    <label for="bairro">Bairro</label>
+                    <label>Bairro</label>
                     <AutoComplete
                         v-model="bairroSelecionado"
                         :suggestions="bairrosFiltrados"
@@ -211,7 +211,7 @@
                             value="1"
                             v-model="cliente.ativo"
                         />
-                        <label for="ativo">Ativo</label>
+                        <label>Ativo</label>
                     </div>
                     <div class="field-radiobutton col-4">
                         <RadioButton
@@ -220,7 +220,7 @@
                             value="0"
                             v-model="cliente.ativo"
                         />
-                        <label for="inativo">Inativo</label>
+                        <label>Inativo</label>
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@
         <Dialog
             v-model:visible="deleteClienteDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">
@@ -279,7 +279,7 @@
         <Dialog
             v-model:visible="deleteClientesDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">

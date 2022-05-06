@@ -98,7 +98,7 @@
         >
             <div class="formgrid grid">
                 <div class="field col-6">
-                    <label for="nome">Nome do Cidade</label>
+                    <label>Nome do Cidade</label>
                     <InputText
                         id="nome"
                         v-model.trim="cidade.nome"
@@ -119,7 +119,7 @@
                             value="1"
                             v-model="cidade.ativo"
                         />
-                        <label for="ativo">Ativo</label>
+                        <label>Ativo</label>
                     </div>
                     <div class="field-radiobutton col-4">
                         <RadioButton
@@ -128,7 +128,7 @@
                             value="0"
                             v-model="cidade.ativo"
                         />
-                        <label for="inativo">Inativo</label>
+                        <label>Inativo</label>
                     </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
         <Dialog
             v-model:visible="deleteCidadeDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">
@@ -187,7 +187,7 @@
         <Dialog
             v-model:visible="deleteCidadesDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">

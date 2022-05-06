@@ -1,5 +1,5 @@
 <template>
-    <TituloPagina titulo="Lista de Itens"></TituloPagina>
+    <TituloPagina titulo="Lista de Situações"></TituloPagina>
     <div class="container-fluid">
         <Toolbar class="mb-4">
             <template #start>
@@ -14,7 +14,7 @@
                     icon="pi pi-trash"
                     class="p-button-danger"
                     @click="confirmDeleteSelected"
-                    :disabled="!selectedItens || !selectedItens.length"
+                    :disabled="!selectedSituacoes || !selectedSituacoes.length"
                 />
             </template>
             <template #end>
@@ -35,9 +35,9 @@
             </template>
         </Toolbar>
         <DataTable
-            :value="itens"
+            :value="situacoes"
             responsiveLayout="scroll"
-            v-model:selection="selectedItens"
+            v-model:selection="selectedSituacoes"
             dataKey="id"
             class="p-datatable-sm"
             stripedRows
@@ -46,7 +46,7 @@
             :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} itens"
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} situações"
         >
             <Column
                 selectionMode="multiple"
@@ -55,7 +55,6 @@
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
-            <Column field="valor" header="Valor"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
@@ -76,13 +75,13 @@
                     <Button
                         icon="pi pi-pencil"
                         class="p-button-rounded mr-2 editar"
-                        @click="editItem(slotProps.data)"
+                        @click="editSituacao(slotProps.data)"
                         v-tooltip.top="'Editar'"
                     />
                     <Button
                         icon="pi pi-trash"
                         class="p-button-rounded excluir"
-                        @click="confirmDeleteItem(slotProps.data)"
+                        @click="confirmDeleteSituacao(slotProps.data)"
                         v-tooltip.top="'Excluir'"
                     />
                 </template>
@@ -90,37 +89,26 @@
         </DataTable>
 
         <Dialog
-            v-model:visible="itemDialog"
+            v-model:visible="situacaoDialog"
             :style="{ width: '550px' }"
-            header="Cadastro de itens"
+            header="Cadastro de Situações"
             :modal="true"
             class="p-fluid"
         >
             <div class="formgrid grid">
                 <div class="field col-6">
-                    <label>Nome do Item</label>
+                    <label>Nome</label>
                     <InputText
                         id="nome"
-                        v-model.trim="item.nome"
+                        v-model.trim="situacao.nome"
                         required="true"
                         autofocus
-                        :class="{ 'p-invalid': submitted && !item.nome }"
+                        :class="{
+                            'p-invalid': submitted && !situacao.nome,
+                        }"
                     />
-                    <small class="p-error" v-if="submitted && !item.nome"
-                        >Nome é obrigatório.</small
-                    >
-                </div>
-                <div class="field col-6">
-                    <label>Valor do Item</label>
-                    <InputText
-                        id="nome"
-                        v-model.trim="item.valor"
-                        required="true"
-                        autofocus
-                        :class="{ 'p-invalid': submitted && !item.valor }"
-                    />
-                    <small class="p-error" v-if="submitted && !item.valor"
-                        >Valor é obrigatório.</small
+                    <small class="p-error" v-if="submitted && !situacao.nome"
+                        >Campo Obrigatório.</small
                     >
                 </div>
                 <div class="field col-6">
@@ -130,16 +118,16 @@
                             id="ativo"
                             name="situacao"
                             value="1"
-                            v-model="item.ativo"
+                            v-model="situacao.ativo"
                         />
                         <label>Ativo</label>
                     </div>
-                    <div class="field-radiobutton col-6">
+                    <div class="field-radiobutton col-4">
                         <RadioButton
                             id="inativo"
                             name="situacao"
                             value="0"
-                            v-model="item.ativo"
+                            v-model="situacao.ativo"
                         />
                         <label>Inativo</label>
                     </div>
@@ -157,14 +145,14 @@
                     label="Salvar"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="salvarItem"
+                    @click="salvarSituacao"
                 />
             </template>
         </Dialog>
 
-        <!-- Pop up deleção de uma unica item selecionado -->
+        <!-- Pop up deleção de uma unica situação selecionada -->
         <Dialog
-            v-model:visible="deleteItemDialog"
+            v-model:visible="deleteSituacaoDialog"
             :style="{ width: '450px' }"
             header="Confirmação"
             :modal="true"
@@ -174,9 +162,9 @@
                     class="pi pi-exclamation-triangle mr-3"
                     style="font-size: 2rem"
                 />
-                <span v-if="item"
-                    >Você tem certeza que deseja apagar o item
-                    <b>{{ item.nome }}</b
+                <span v-if="situacao"
+                    >Você tem certeza que deseja apagar a Situação
+                    <b>{{ situacao.nome }}</b
                     >?</span
                 >
             </div>
@@ -185,20 +173,20 @@
                     label="Não"
                     icon="pi pi-times"
                     class="p-button-text"
-                    @click="deleteItemDialog = false"
+                    @click="deleteSituacaoDialog = false"
                 />
                 <Button
                     label="Sim"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="deleteItem"
+                    @click="deleteSituacao"
                 />
             </template>
         </Dialog>
 
-        <!-- Pop up deleção de varios itens selecionadas -->
+        <!-- Pop up deleção de varias situações selecionadas -->
         <Dialog
-            v-model:visible="deleteItensDialog"
+            v-model:visible="deleteSituacoesDialog"
             :style="{ width: '450px' }"
             header="Confirmação"
             :modal="true"
@@ -208,9 +196,9 @@
                     class="pi pi-exclamation-triangle mr-3"
                     style="font-size: 2rem"
                 />
-                <span v-if="item"
-                    >Você tem certeza que deseja apagar os itens
-                    selecionados?</span
+                <span v-if="situacao"
+                    >Você tem certeza que deseja apagar as Situações
+                    selecionadas?</span
                 >
             </div>
             <template #footer>
@@ -218,13 +206,13 @@
                     label="Não"
                     icon="pi pi-times"
                     class="p-button-text"
-                    @click="deleteItensDialog = false"
+                    @click="deleteSituacoesDialog = false"
                 />
                 <Button
                     label="Sim"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="deleteSelectedItens"
+                    @click="deleteSelectedSituacoes"
                 />
             </template>
         </Dialog>
@@ -241,35 +229,36 @@ import { baseApiUrl } from "@/global";
 const axios = require("axios");
 
 export default {
-    name: "Item",
+    name: "Situacao",
     components: { TituloPagina },
     data() {
         return {
-            itens: [],
+            situacoes: [],
             loading: false,
-            item: {},
+            situacao: {},
             submitted: false,
-            itemDialog: false,
-            deleteItensDialog: false,
-            deleteItemDialog: false,
-            selectedItens: null,
-            url: `${baseApiUrl}/item/`,
+            situacaoDialog: false,
+            situacaoSelecionada: null,
+            deleteSituacoesDialog: false,
+            deleteSituacaoDialog: false,
+            selectedSituacoes: null,
+            url: `${baseApiUrl}/situacao/`,
             filtro: "todos",
         };
     },
     methods: {
         abrirNovo() {
-            this.item = {};
-            this.item.ativo = "1";
+            this.situacao = {};
+            this.situacao.ativo = "1";
             this.submitted = false;
-            this.itemDialog = true;
+            this.situacaoDialog = true;
         },
-        async getItens() {
+        async getSituacoes() {
             switch (this.filtro) {
                 case "todos":
                     try {
                         const response = await axios.get(this.url);
-                        this.itens = response.data;
+                        this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -279,7 +268,7 @@ export default {
                 case "ativos":
                     try {
                         const response = await axios.get(`${this.url}ativo`);
-                        this.itens = response.data;
+                        this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -289,7 +278,7 @@ export default {
                 case "inativos":
                     try {
                         const response = await axios.get(`${this.url}inativo`);
-                        this.itens = response.data;
+                        this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -299,7 +288,7 @@ export default {
                 default:
                     try {
                         const response = await axios.get(this.url);
-                        this.itens = response.data;
+                        this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -308,45 +297,45 @@ export default {
             }
         },
         confirmDeleteSelected() {
-            // Se tiver somente um item selecionado, abre o pop up de deleção de um unico item
-            if (this.selectedItens.length == 1) {
-                this.item = this.selectedItens.shift();
-                this.deleteItemDialog = true;
-            } // Caso tiver mais de um selecionado, abre o pop up de delação de varios itens
-            else this.deleteItensDialog = true;
+            // Abre o pop up de deleção de uma unica Situação
+            if (this.selectedSituacoes.length == 1) {
+                this.situacao = this.selectedSituacoes.shift();
+                this.deleteSituacaoDialog = true;
+            } // Abre o pop up de delação de varias Situações
+            else this.deleteSituacoesDialog = true;
         },
         hideDialog() {
-            this.itemDialog = false;
+            this.situacaoDialog = false;
             this.submitted = false;
         },
-        async salvarItem() {
+        async salvarSituacao() {
             this.submitted = true;
-            if (this.item.nome.trim()) {
-                if (this.item.id) {
+            if (this.situacao.nome.trim()) {
+                if (this.situacao.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
                         await axios.put(
-                            `${this.url}${this.item.id}`,
-                            this.item
+                            `${this.url}${this.situacao.id}`,
+                            this.situacao
                         );
 
-                        this.getItens(); // Refresh na lista
+                        this.getSituacoes(); // Refresh na lista
 
                         this.$toast.add({
                             severity: "success",
                             summary: "Sucesso",
-                            detail: `Item ${this.item.nome} atualizado com sucesso`,
+                            detail: `Situação ${this.situacao.nome} atualizada com sucesso`,
                             life: 3000,
                         });
 
-                        this.itemDialog = false; // Fecha o pop up
-                        this.item = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        this.situacaoDialog = false; // Fecha o pop up
+                        this.situacao = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
                     } catch (error) {
                         console.error(error);
                         this.$toast.add({
                             severity: "error",
                             summary: "Erro",
-                            detail: `Não foi possível atualizar o item ${this.item.nome}. Erro: ${error}`,
+                            detail: `Não foi possível atualizar a Situacao ${this.situacao.nome}. Erro: ${error}`,
                             life: 3000,
                         });
                     } finally {
@@ -355,25 +344,28 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(this.url, this.item);
+                        const response = await axios.post(
+                            this.url,
+                            this.situacao
+                        );
 
-                        this.getItens(); // Refresh na lista
+                        this.getSituacoes(); // Refresh na lista
 
                         this.$toast.add({
                             severity: "success",
                             summary: "Sucesso",
-                            detail: `Item ${this.item.nome} Cadastrado com sucesso`,
+                            detail: `Situação ${this.situacao.nome} cadastrada com sucesso`,
                             life: 3000,
                         });
 
-                        this.itemDialog = false; // Fecha o pop up
-                        this.item = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                        this.situacaoDialog = false; // Fecha o pop up
+                        this.situacao = {}; // Limpa o objeto
                     } catch (error) {
                         console.error(error);
                         this.$toast.add({
                             severity: "error",
                             summary: "Erro no cadastro",
-                            detail: `Não foi possível cadastrar o item ${this.item.nome}. Erro: ${error}`,
+                            detail: `Não foi possível cadastrar a Situação ${this.situacao.nome}. Erro: ${error}`,
                             life: 3000,
                         });
                     } finally {
@@ -382,59 +374,62 @@ export default {
                 }
             }
         },
-        async deleteItem() {
+        async deleteSituacao() {
             try {
-                const response = await axios.delete(
-                    `${this.url}${this.item.id}`
-                );
+                await axios.delete(`${this.url}${this.situacao.id}`);
 
-                this.getItens(); // Refresh na lista
+                this.getSituacoes(); // Refresh na lista
 
-                this.deleteItemDialog = false;
+                this.deleteSituacaoDialog = false;
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    detail: `Item ${this.item.nome} excluído do sistema`,
+                    detail: `Situação  ${this.situacao.nome} excluída do sistema`,
                     life: 3000,
                 });
-                this.item = {};
-                this.selectedItens = null;
+
+                this.situacao = {};
+                this.selectedSituacoes = null;
+
             } catch (error) {
                 console.error(error);
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro no cadastro",
-                    detail: `Não foi possível cadastrar o item ${this.item.nome}. Erro: ${error}`,
+                    detail: `Não foi possível cadastrar a Situação ${this.situacao.nome}. Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
                 this.loading = false;
             }
         },
-        confirmDeleteItem(item) {
-            this.item = item;
-            this.deleteItemDialog = true;
+        confirmDeleteSituacao(situacao) {
+            this.situacao = situacao;
+            this.deleteSituacaoDialog = true;
         },
         // Metodo para deletar varios clientes
-        async deleteSelectedItens() {
+        async deleteSelectedSituacoes() {
             try {
-                let itensIds = [];
-                this.selectedItens.forEach((e) => {
-                    itensIds.push(e.id);
+                let situacoesIds = [];
+
+                // Loop para pegar os ids das Situações selecionadas para exclusão
+                this.selectedSituacoes.forEach((e) => {
+                    situacoesIds.push(e.id);
                 });
 
+                // Chama o delete passando o array de Ids
                 const response = await axios.delete(this.url, {
-                    data: itensIds,
+                    data: situacoesIds,
                 });
 
-                this.getItens(); // Refresh na lista
+                this.getSituacoes(); // Refresh na lista
 
-                this.deleteItensDialog = false;
-                this.selectedItens = null;
+                this.deleteSituacoesDialog = false;
+                this.selectedSituacoes = null;
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    detail: response.data.message, // A mensagem foi definida no controller
+                    detail: response.data.message, // A mensagem definida no controller
                     life: 3000,
                 });
             } catch (error) {
@@ -442,27 +437,27 @@ export default {
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: `Não foi possível excluir os itens selecionados. Erro: ${error}`,
+                    detail: `Não foi possível excluir as Situações. Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
                 this.loading = false;
             }
         },
-        editItem(item) {
-            this.item = item;
-            this.item.ativo = item.ativo ? "1" : "0";
+        editSituacao(situacao) {
+            this.situacao = situacao;
+            this.situacao.ativo = situacao.ativo ? "1" : "0";
 
-            this.itemDialog = true;
+            this.situacaoDialog = true;
         },
     },
     mounted() {
         this.loading = true;
-        this.getItens();
+        this.getSituacoes();
     },
     watch: {
         filtro() {
-            this.getItens();
+            this.getSituacoes();
         },
     },
 };

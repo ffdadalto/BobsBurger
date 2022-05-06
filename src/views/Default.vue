@@ -45,7 +45,8 @@
                             <Column field="numero" header="Número"></Column>
                             <Column field="cliente" header="Cliente"></Column>
                             <Column field="bairro" header="Bairro"></Column>
-                            <Column field="card-valor" header="Valor"></Column>
+                            <Column field="valor" header="Valor"></Column>
+                            <Column field="formaPagamento.nome" header="Pagamento"></Column>
                             <Column field="situacao" header="Situação"></Column>
                         </DataTable>
                     </div>

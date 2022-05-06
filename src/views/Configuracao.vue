@@ -117,7 +117,7 @@
                 >
             </div>
             <div class="field col-12 md:col-3">
-                <label for="Phone">Telefone Fixo</label>
+                <label>Telefone Fixo</label>
                 <InputMask
                     mask="(99) 9999-9999"
                     v-model="configuracao.telefoneFixoEmpresa"
@@ -134,7 +134,7 @@
                 >
             </div>
             <div class="field col-12 md:col-3">
-                <label for="Phone">Celular/WhatsApp</label>
+                <label>Celular/WhatsApp</label>
                 <InputMask
                     mask="(99) 99999-9999"
                     v-model="configuracao.telefoneCelEmpresa"

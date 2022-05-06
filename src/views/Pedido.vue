@@ -55,8 +55,10 @@
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="numero" header="Número" :sortable="true"></Column>
-            <Column field="valorTotal" header="valorTotal"></Column>
             <Column field="cliente.nome" header="Cliente"></Column>
+            <Column field="valorTotal" header="valorTotal"></Column>
+            <Column field="formaPagamento.nome" header="Pagamento"></Column>
+            <Column field="situacao.nome" header="Situacao"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
@@ -99,7 +101,7 @@
         >
             <div class="formgrid grid">
                 <div class="field col-12">
-                    <label for="cliente">Cliente</label>
+                    <label>Cliente</label>
                     <AutoComplete
                         v-model="clienteSelecionado"
                         :suggestions="clientesFiltrados"
@@ -119,11 +121,11 @@
                         >Cliente é obrigatório</small
                     >
                 </div>
-                <div class="field col-12">
-                    <label for="nome">Número do Pedido</label>
+                <div class="field col-3">
+                    <label>Número</label>
                     <InputText
                         id="numero"
-                        v-model.trim="pedido.numero"
+                        v-model="pedido.numero"
                         required="true"
                         :class="{ 'p-invalid': submitted && !pedido.numero }"
                     />
@@ -131,11 +133,11 @@
                         >Número é obrigatório.</small
                     >
                 </div>
-                <div class="field col-12">
-                    <label for="valorTotal">Valor Total</label>
+                <div class="field col-3">
+                    <label>Valor Total</label>
                     <InputText
                         id="valorTotal"
-                        v-model.trim="pedido.valorTotal"
+                        v-model="pedido.valorTotal"
                         required="true"
                         :class="{
                             'p-invalid': submitted && !pedido.valorTotal,
@@ -143,6 +145,48 @@
                     />
                     <small class="p-error" v-if="submitted && pedido.valorTotal"
                         >Valor Total é obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
+                    <label>Pagamento</label>
+                    <AutoComplete
+                        v-model="formaPagamentoSelecionado"
+                        :suggestions="formasPagamentosFiltrados"
+                        @complete="procurarFormaPagamento($event)"
+                        :dropdown="true"
+                        field="nome"
+                        forceSelection
+                        placeholder="Selecione uma..."
+                    >
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
+                    <small
+                        class="p-error"
+                        v-if="submitted && !formaPagamentoSelecionado"
+                        >Campo obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
+                    <label>Situação do Pedido</label>
+                    <AutoComplete
+                        v-model="situacaoSelecionada"
+                        :suggestions="situacoesFiltradas"
+                        @complete="procurarSituacao($event)"
+                        :dropdown="true"
+                        field="nome"
+                        forceSelection
+                        placeholder="Selecione uma..."
+                    >
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
+                    <small
+                        class="p-error"
+                        v-if="submitted && !situacaoSelecionada"
+                        >Campo obrigatório.</small
                     >
                 </div>
                 <div class="field">
@@ -154,7 +198,7 @@
                             value="1"
                             v-model="pedido.ativo"
                         />
-                        <label for="ativo">Ativo</label>
+                        <label>Ativo</label>
                     </div>
                     <div class="field-radiobutton col-4">
                         <RadioButton
@@ -163,7 +207,7 @@
                             value="0"
                             v-model="pedido.ativo"
                         />
-                        <label for="inativo">Inativo</label>
+                        <label>Inativo</label>
                     </div>
                 </div>
             </div>
@@ -187,7 +231,7 @@
         <Dialog
             v-model:visible="deletePedidoDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">
@@ -221,7 +265,7 @@
         <Dialog
             v-model:visible="deletePedidosDialog"
             :style="{ width: '450px' }"
-            header="Confirm"
+            header="Confirmação"
             :modal="true"
         >
             <div class="confirmation-content">
@@ -271,14 +315,19 @@ export default {
             pedido: {},
             submitted: false,
             pedidoDialog: false,
-            situacaoSelecionada: null,
             deletePedidosDialog: false,
             deletePedidoDialog: false,
             selectedPedidos: null,
             url: `${baseApiUrl}/pedido/`,
             clienteSelecionado: null,
+            formaPagamentoSelecionado: null,
+            situacaoSelecionada: null,
             clientesFiltrados: [],
+            formasPagamentosFiltrados: [],
+            situacoesFiltradas: [],
             clientes: [],
+            formasPagamentos: [],
+            situacoes: [],
             filtro: "todos",
         };
     },
@@ -353,7 +402,13 @@ export default {
                     if (this.pedido.id) {
                         // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                         try {
-                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade escolhia ao pedido
+                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
+
+                            this.pedido.formaPagamentoId =
+                                this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
+
+                            this.pedido.situacaoId =
+                                this.situacaoSelecionada.id; // Liga a situação do pedido
 
                             const res = await axios.put(
                                 `${this.url}${this.pedido.id}`,
@@ -370,8 +425,10 @@ export default {
                             });
 
                             this.pedidoDialog = false; // Fecha o pop up
-                            this.pedido = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                            this.clienteSelecionado = null; // Limpa o objeto pra na proxima abertura do pop up
+                            this.pedido = null; // Limpa o objeto
+                            this.clienteSelecionado = null; // Limpa o objeto
+                            this.formaPagamentoSelecionado = null; // Limpa o objeto
+                            this.situacaoSelecionada = null; // Limpa o objeto
                         } catch (error) {
                             console.error(error);
                             this.$toast.add({
@@ -386,7 +443,13 @@ export default {
                     } else {
                         // Cadastro
                         try {
-                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade escolhia ao pedido
+                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
+
+                            this.pedido.formaPagamentoId =
+                                this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
+
+                            this.pedido.situacaoId =
+                                this.situacaoSelecionada.id; // Liga a situação do pedido
 
                             const response = await axios.post(
                                 this.url,
@@ -403,8 +466,10 @@ export default {
                             this.getPedidos(); // Refresh na lista
 
                             this.pedidoDialog = false; // Fecha o pop up
-                            this.pedido = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                            this.clienteSelecionado = null; // Limpa o objeto pra na proxima abertura do pop up
+                            this.pedido = null; // Limpa o objeto
+                            this.clienteSelecionado = null; // Limpa o objeto
+                            this.formaPagamentoSelecionado = null; // Limpa o objeto
+                            this.situacaoSelecionada = null; // Limpa o objeto
                         } catch (error) {
                             console.error(error);
                             this.$toast.add({
@@ -494,20 +559,11 @@ export default {
             this.submitted = false;
             this.pedido = pedido;
             this.clienteSelecionado = pedido.cliente;
+            this.formaPagamentoSelecionado = pedido.formaPagamento;
+            this.situacaoSelecionada = pedido.situacao;
             this.pedido.ativo = pedido.ativo ? "1" : "0";
 
             this.pedidoDialog = true;
-        },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.pedidos.length; i++) {
-                if (this.pedidos[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
         },
         procurarCliente(event) {
             setTimeout(() => {
@@ -522,10 +578,62 @@ export default {
                 }
             }, 250);
         },
+        procurarFormaPagamento(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.formasPagamentosFiltrados = this.formasPagamentos;
+                } else {
+                    this.formasPagamentosFiltrados =
+                        this.formasPagamentos.filter((formaPagamento) => {
+                            return formaPagamento.nome
+                                .toLowerCase()
+                                .startsWith(event.query.toLowerCase());
+                        });
+                }
+            }, 250);
+        },
+        procurarSituacao(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.situacoesFiltradas = this.situacoes;
+                } else {
+                    this.situacoesFiltradas = this.situacoes.filter(
+                        (situacao) => {
+                            return situacao.nome
+                                .toLowerCase()
+                                .startsWith(event.query.toLowerCase());
+                        }
+                    );
+                }
+            }, 250);
+        },
         async getClientes() {
             try {
                 const response = await axios.get(`${baseApiUrl}/cliente/`);
                 this.clientes = response.data;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+        async getFormasPagamentos() {
+            try {
+                const response = await axios.get(
+                    `${baseApiUrl}/formaPagamento/`
+                );
+                this.formasPagamentos = response.data;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async getSituacoes() {
+            try {
+                const response = await axios.get(`${baseApiUrl}/situacao/`);
+                this.situacoes = response.data;
             } catch (error) {
                 console.error(error);
             } finally {
@@ -537,6 +645,8 @@ export default {
         this.loading = true;
         this.getPedidos();
         this.getClientes();
+        this.getFormasPagamentos();
+        this.getSituacoes();
     },
     watch: {
         filtro() {

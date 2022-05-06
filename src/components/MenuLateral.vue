@@ -12,6 +12,11 @@
         </router-link>
       </li>
       <li>
+        <router-link to="/Situacao" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-list"></i>Situações</div>
+        </router-link>
+      </li>
+      <li>
         <router-link to="/Item" custom v-slot="{ navigate }">
           <div class="div-menu" role="link" @click="navigate"><i class="pi pi-shopping-cart"></i>Itens</div>
         </router-link>
@@ -19,6 +24,11 @@
       <li>
         <router-link to="/Cliente" custom v-slot="{ navigate }">
           <div class="div-menu" role="link" @click="navigate"><i class="pi pi-user"></i>Clientes</div>
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/FormaPagamento" custom v-slot="{ navigate }">
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-dollar"></i>Formas de Pagamento</div>
         </router-link>
       </li>
       <li>

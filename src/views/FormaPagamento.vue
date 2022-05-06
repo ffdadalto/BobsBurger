@@ -1,5 +1,5 @@
 <template>
-    <TituloPagina titulo="Lista de Bairros"></TituloPagina>
+    <TituloPagina titulo="Lista de Formas de Pagamentos"></TituloPagina>
     <div class="container-fluid">
         <Toolbar class="mb-4">
             <template #start>
@@ -14,7 +14,10 @@
                     icon="pi pi-trash"
                     class="p-button-danger"
                     @click="confirmDeleteSelected"
-                    :disabled="!selectedBairros || !selectedBairros.length"
+                    :disabled="
+                        !selectedFormasPagamentos ||
+                        !selectedFormasPagamentos.length
+                    "
                 />
             </template>
             <template #end>
@@ -35,9 +38,9 @@
             </template>
         </Toolbar>
         <DataTable
-            :value="bairros"
+            :value="formasPagamentos"
             responsiveLayout="scroll"
-            v-model:selection="selectedBairros"
+            v-model:selection="selectedFormasPagamentos"
             dataKey="id"
             class="p-datatable-sm"
             stripedRows
@@ -46,7 +49,7 @@
             :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} bairros"
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} formasPagamentos"
         >
             <Column
                 selectionMode="multiple"
@@ -55,7 +58,7 @@
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
-            <Column field="cidade.nome" header="Cidade"></Column>
+            <Column field="taxa" header="Taxa(%)"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
@@ -76,13 +79,13 @@
                     <Button
                         icon="pi pi-pencil"
                         class="p-button-rounded mr-2 editar"
-                        @click="editBairro(slotProps.data)"
+                        @click="editFormaPagamento(slotProps.data)"
                         v-tooltip.top="'Editar'"
                     />
                     <Button
                         icon="pi pi-trash"
                         class="p-button-rounded excluir"
-                        @click="confirmDeleteBairro(slotProps.data)"
+                        @click="confirmDeleteFormaPagamento(slotProps.data)"
                         v-tooltip.top="'Excluir'"
                     />
                 </template>
@@ -90,54 +93,55 @@
         </DataTable>
 
         <Dialog
-            v-model:visible="bairroDialog"
+            v-model:visible="formaPagamentoDialog"
             :style="{ width: '550px' }"
-            header="Cadastro de bairros"
+            header="Cadastro de Formas de Pagamento"
             :modal="true"
             class="p-fluid"
         >
             <div class="formgrid grid">
-                <div class="field col-12">
-                    <label>Cidade</label>
-                    <AutoComplete
-                        v-model="cidadeSelecionada"
-                        :suggestions="cidadesFiltradas"
-                        @complete="procurarCidade($event)"
-                        :dropdown="true"
-                        field="nome"
-                        forceSelection
-                        placeholder="Selecione uma cidade"
-                    >
-                        <template #item="slotProps">
-                            <div>{{ slotProps.item.nome }}</div>
-                        </template>
-                    </AutoComplete>
-                    <small
-                        class="p-error"
-                        v-if="submitted && !cidadeSelecionada"
-                        >Cidade é obrigatório</small
-                    >
-                </div>
-                <div class="field col-12">
+                <div class="field col-6">
                     <label>Nome</label>
                     <InputText
                         id="nome"
-                        v-model.trim="bairro.nome"
+                        v-model.trim="formaPagamento.nome"
                         required="true"
-                        :class="{ 'p-invalid': submitted && !bairro.nome }"
+                        autofocus
+                        :class="{
+                            'p-invalid': submitted && !formaPagamento.nome,
+                        }"
                     />
-                    <small class="p-error" v-if="submitted && !bairro.nome"
-                        >Nome é obrigatório.</small
+                    <small
+                        class="p-error"
+                        v-if="submitted && !formaPagamento.nome"
+                        >Campo Obrigaórtio.</small
                     >
                 </div>
-                <div class="field">
+                <div class="field col-6">
+                    <label>Taxa (%)</label>
+                    <InputText
+                        id="nome"
+                        v-model="formaPagamento.taxa"
+                        required="true"
+                        autofocus
+                        :class="{
+                            'p-invalid': submitted && !formaPagamento.taxa,
+                        }"
+                    />
+                    <small
+                        class="p-error"
+                        v-if="submitted && !formaPagamento.taxa"
+                        >Campo Obrigaórtio.</small
+                    >
+                </div>
+                <div class="field col-6">
                     <label class="mb-3">Situação</label>
                     <div class="field-radiobutton col-4">
                         <RadioButton
                             id="ativo"
                             name="situacao"
                             value="1"
-                            v-model="bairro.ativo"
+                            v-model="formaPagamento.ativo"
                         />
                         <label>Ativo</label>
                     </div>
@@ -146,12 +150,13 @@
                             id="inativo"
                             name="situacao"
                             value="0"
-                            v-model="bairro.ativo"
+                            v-model="formaPagamento.ativo"
                         />
                         <label>Inativo</label>
                     </div>
                 </div>
             </div>
+
             <template #footer>
                 <Button
                     label="Cancelar"
@@ -163,14 +168,14 @@
                     label="Salvar"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="salvarBairro"
+                    @click="salvarFormaPagamento"
                 />
             </template>
         </Dialog>
 
-        <!-- Pop up deleção de um unico bairro selecionado -->
+        <!-- Pop up deleção de uma unica formaPagamento selecionado -->
         <Dialog
-            v-model:visible="deleteBairroDialog"
+            v-model:visible="deleteFormaPagamentoDialog"
             :style="{ width: '450px' }"
             header="Confirmação"
             :modal="true"
@@ -180,9 +185,9 @@
                     class="pi pi-exclamation-triangle mr-3"
                     style="font-size: 2rem"
                 />
-                <span v-if="bairro"
-                    >Você tem certeza que deseja apagar o bairro
-                    <b>{{ bairro.nome }}</b
+                <span v-if="formaPagamento"
+                    >Você tem certeza que deseja apagar a Forma de Pagamento
+                    <b>{{ formaPagamento.nome }}</b
                     >?</span
                 >
             </div>
@@ -191,20 +196,20 @@
                     label="Não"
                     icon="pi pi-times"
                     class="p-button-text"
-                    @click="deleteBairroDialog = false"
+                    @click="deleteFormaPagamentoDialog = false"
                 />
                 <Button
                     label="Sim"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="deleteBairro"
+                    @click="deleteFormaPagamento"
                 />
             </template>
         </Dialog>
 
-        <!-- Pop up deleção de varios bairros selecionados -->
+        <!-- Pop up deleção de varias formasPagamentos selecionadas -->
         <Dialog
-            v-model:visible="deleteBairrosDialog"
+            v-model:visible="deleteFormasPagamentosDialog"
             :style="{ width: '450px' }"
             header="Confirmação"
             :modal="true"
@@ -214,9 +219,9 @@
                     class="pi pi-exclamation-triangle mr-3"
                     style="font-size: 2rem"
                 />
-                <span v-if="bairro"
-                    >Você tem certeza que deseja apagar os bairros
-                    selecionados?</span
+                <span v-if="formaPagamento"
+                    >Você tem certeza que deseja apagar as Formas de Pagamentos
+                    selecionadas?</span
                 >
             </div>
             <template #footer>
@@ -224,13 +229,13 @@
                     label="Não"
                     icon="pi pi-times"
                     class="p-button-text"
-                    @click="deleteBairrosDialog = false"
+                    @click="deleteFormasPagamentosDialog = false"
                 />
                 <Button
                     label="Sim"
                     icon="pi pi-check"
                     class="p-button-text"
-                    @click="deleteSelectedBairros"
+                    @click="deleteSelectedFormasPagamentos"
                 />
             </template>
         </Dialog>
@@ -247,39 +252,36 @@ import { baseApiUrl } from "@/global";
 const axios = require("axios");
 
 export default {
-    name: "Bairro",
+    name: "FormaPagamento",
     components: { TituloPagina },
     data() {
         return {
-            bairros: [],
+            formasPagamentos: [],
             loading: false,
-            bairro: {},
+            formaPagamento: {},
             submitted: false,
-            bairroDialog: false,
+            formaPagamentoDialog: false,
             situacaoSelecionada: null,
-            deleteBairrosDialog: false,
-            deleteBairroDialog: false,
-            selectedBairros: null,
-            url: `${baseApiUrl}/bairro/`,
-            cidadeSelecionada: null,
-            cidadesFiltradas: [],
-            cidades: [],
+            deleteFormasPagamentosDialog: false,
+            deleteFormaPagamentoDialog: false,
+            selectedFormasPagamentos: null,
+            url: `${baseApiUrl}/formaPagamento/`,
             filtro: "todos",
         };
     },
     methods: {
         abrirNovo() {
-            this.bairro = {};
-            this.bairro.ativo = "1";
+            this.formaPagamento = {};
+            this.formaPagamento.ativo = "1";
             this.submitted = false;
-            this.bairroDialog = true;
+            this.formaPagamentoDialog = true;
         },
-        async getBairros() {
+        async getFormasPagamentos() {
             switch (this.filtro) {
                 case "todos":
                     try {
                         const response = await axios.get(this.url);
-                        this.bairros = response.data;
+                        this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -289,7 +291,7 @@ export default {
                 case "ativos":
                     try {
                         const response = await axios.get(`${this.url}ativo`);
-                        this.bairros = response.data;
+                        this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -299,7 +301,7 @@ export default {
                 case "inativos":
                     try {
                         const response = await axios.get(`${this.url}inativo`);
-                        this.bairros = response.data;
+                        this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -309,7 +311,7 @@ export default {
                 default:
                     try {
                         const response = await axios.get(this.url);
-                        this.bairros = response.data;
+                        this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
                     } finally {
@@ -318,147 +320,138 @@ export default {
             }
         },
         confirmDeleteSelected() {
-            // Se tiver somente um bairro selecionado, abre o pop up de deleção de um unico bairro
-            if (this.selectedBairros.length == 1) {
-                this.bairro = { ...this.selectedBairros[0] };
-                this.deleteBairroDialog = true;
-            } // Caso tiver mais de um selecionado, abre o pop up de delação de varios bairros
-            else this.deleteBairrosDialog = true;
+            // Se tiver somente um formaPagamento selecionado, abre o pop up de deleção de um unico formaPagamento
+            if (this.selectedFormasPagamentos.length == 1) {
+                this.formaPagamento = this.selectedFormasPagamentos.shift();
+                this.deleteFormaPagamentoDialog = true;
+            } // Caso tiver mais de um selecionado, abre o pop up de delação de varios formasPagamentos
+            else this.deleteFormasPagamentosDialog = true;
         },
         hideDialog() {
-            this.bairroDialog = false;
+            this.formaPagamentoDialog = false;
             this.submitted = false;
         },
-        async salvarBairro() {
+        async salvarFormaPagamento() {
             this.submitted = true;
-            if (this.bairro.nome && this.cidadeSelecionada) {
-                // Validação
-                if (this.bairro.nome.trim()) {
-                    if (this.bairro.id) {
-                        // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
-                        try {
-                            this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
+            if (this.formaPagamento.nome.trim() && this.formaPagamento.taxa) {
+                if (this.formaPagamento.id) {
+                    // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                    try {
+                        await axios.put(
+                            `${this.url}${this.formaPagamento.id}`,
+                            this.formaPagamento
+                        );
 
-                            const res = await axios.put(
-                                `${this.url}${this.bairro.id}`,
-                                this.bairro
-                            );
+                        this.getFormasPagamentos(); // Refresh na lista
 
-                            this.getBairros(); // Refresh na lista
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Forma de Pagamento ${this.formaPagamento.nome} atualizada com sucesso`,
+                            life: 3000,
+                        });
 
-                            this.$toast.add({
-                                severity: "success",
-                                summary: "Sucesso",
-                                detail: `Bairro ${this.bairro.nome} atualizado com sucesso!`,
-                                life: 3000,
-                            });
+                        this.formaPagamentoDialog = false; // Fecha o pop up
+                        this.formaPagamento = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro",
+                            detail: `Não foi possível atualizar a Forma de Pagamento ${this.formaPagamento.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
+                    }
+                } else {
+                    // Cadastro
+                    try {
+                        const response = await axios.post(
+                            this.url,
+                            this.formaPagamento
+                        );
 
-                            this.bairroDialog = false; // Fecha o pop up
-                            this.bairro = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                            this.cidadeSelecionada = null; // Limpa o objeto pra na proxima abertura do pop up
-                        } catch (error) {
-                            console.error(error);
-                            this.$toast.add({
-                                severity: "error",
-                                summary: "Erro",
-                                detail: `Não foi possível atualizar o bairro ${this.bairro.nome}!. Erro: ${error}`,
-                                life: 3000,
-                            });
-                        } finally {
-                            this.loading = false;
-                        }
-                    } else {
-                        // Cadastro
-                        try {
-                            this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
+                        this.getFormasPagamentos(); // Refresh na lista
 
-                            const response = await axios.post(
-                                this.url,
-                                this.bairro
-                            );
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `Forma de Pagamento ${this.formaPagamento.nome} cadastrada com sucesso`,
+                            life: 3000,
+                        });
 
-                            this.$toast.add({
-                                severity: "success",
-                                summary: "Sucesso",
-                                detail: `Bairro ${this.bairro.nome} Cadastrado com sucesso!`,
-                                life: 3000,
-                            });
-
-                            this.getBairros(); // Refresh na lista
-
-                            this.bairroDialog = false; // Fecha o pop up
-                            this.bairro = null; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
-                            this.cidadeSelecionada = null; // Limpa o objeto pra na proxima abertura do pop up
-                        } catch (error) {
-                            console.error(error);
-                            this.$toast.add({
-                                severity: "error",
-                                summary: "Erro no cadastro",
-                                detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}! Erro: ${error}`,
-                                life: 3000,
-                            });
-                        } finally {
-                            this.loading = false;
-                        }
+                        this.formaPagamentoDialog = false; // Fecha o pop up
+                        this.formaPagamento = {}; // Limpa o objeto pra na proxima abertura do pop up os campos virem limpos
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro no cadastro",
+                            detail: `Não foi possível cadastrar a Forma de Pagamento ${this.formaPagamento.nome}. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
                     }
                 }
             }
         },
-        async deleteBairro() {
+        async deleteFormaPagamento() {
             try {
                 const response = await axios.delete(
-                    `${this.url}${this.bairro.id}`
+                    `${this.url}${this.formaPagamento.id}`
                 );
-                this.bairros = this.bairros.filter(
-                    (val) => val.id !== this.bairro.id
-                );
-                this.deleteBairroDialog = false;
+
+                this.getFormasPagamentos(); // Refresh na lista
+
+                this.deleteFormaPagamentoDialog = false;
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    detail: `Bairro ${this.bairro.nome} excluído do sistema!`,
+                    detail: `Forma de Pagamento ${this.formaPagamento.nome} excluída do sistema`,
                     life: 3000,
                 });
-                this.bairro = {};
-                this.selectedBairros = null;
+                this.formaPagamento = {};
+                this.selectedFormasPagamentos = null;
             } catch (error) {
                 console.error(error);
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro no cadastro",
-                    detail: `Não foi possível cadastrar o bairro ${this.bairro.nome}! Erro: ${error}`,
+                    detail: `Não foi possível cadastrar a Forma de Pagamento ${this.formaPagamento.nome}. Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
                 this.loading = false;
             }
         },
-        confirmDeleteBairro(bairro) {
-            this.bairro = bairro;
-            this.deleteBairroDialog = true;
+        confirmDeleteFormaPagamento(formaPagamento) {
+            this.formaPagamento = formaPagamento;
+            this.deleteFormaPagamentoDialog = true;
         },
-        // Metodo para deletar varios bairros
-        async deleteSelectedBairros() {
+        // Metodo para deletar varios clientes
+        async deleteSelectedFormasPagamentos() {
             try {
-                let bairrosIds = [];
-                this.selectedBairros.forEach((e) => {
-                    bairrosIds.push(e.id);
-                });
+                let formasPagamentosIds = [];
 
+                // Loop para pegar os ids das formas de pagamentos seleconadas para exclusão
+                this.selectedFormasPagamentos.forEach((e) => {
+                    formasPagamentosIds.push(e.id);
+                });
+                
+                // Chama o delete passando o array de Ids
                 const response = await axios.delete(this.url, {
-                    data: bairrosIds,
+                    data: formasPagamentosIds,
                 });
 
-                this.bairros = this.bairros.filter(
-                    (val) => !this.selectedBairros.includes(val)
-                );
+                this.getFormasPagamentos(); // Refresh na lista
 
-                this.deleteBairrosDialog = false;
-                this.selectedBairros = null;
+                this.deleteFormasPagamentosDialog = false;
+                this.selectedFormasPagamentos = null;
                 this.$toast.add({
                     severity: "success",
                     summary: "Sucesso",
-                    // detail: "Os bairros selecionados foram excluídos dos sistema",
                     detail: response.data.message, // A mensagem foi definida no controller
                     life: 3000,
                 });
@@ -467,63 +460,27 @@ export default {
                 this.$toast.add({
                     severity: "error",
                     summary: "Erro",
-                    detail: `Não foi possível excluir os bairros selecionados! Erro: ${error}`,
+                    detail: `Não foi possível excluir as Formas de Pagamentos. Erro: ${error}`,
                     life: 3000,
                 });
             } finally {
                 this.loading = false;
             }
         },
-        editBairro(bairro) {
-            this.bairro = bairro;
-            this.cidadeSelecionada = bairro.cidade;
-            this.bairro.ativo = bairro.ativo ? "1" : "0";
+        editFormaPagamento(formaPagamento) {
+            this.formaPagamento = formaPagamento;
+            this.formaPagamento.ativo = formaPagamento.ativo ? "1" : "0";
 
-            this.bairroDialog = true;
-        },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.bairros.length; i++) {
-                if (this.bairros[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        },
-        procurarCidade(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.cidadesFiltradas = [...this.cidades];
-                } else {
-                    this.cidadesFiltradas = this.cidades.filter((cidade) => {
-                        return cidade.nome
-                            .toLowerCase()
-                            .startsWith(event.query.toLowerCase());
-                    });
-                }
-            }, 250);
-        },
-        async getCidades() {
-            try {
-                const response = await axios.get(`${baseApiUrl}/cidade/`);
-                this.cidades = response.data;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.loading = false;
-            }
+            this.formaPagamentoDialog = true;
         },
     },
     mounted() {
         this.loading = true;
-        this.getBairros();
-        this.getCidades();
+        this.getFormasPagamentos();
     },
     watch: {
         filtro() {
-            this.getBairros();
+            this.getFormasPagamentos();
         },
     },
 };
