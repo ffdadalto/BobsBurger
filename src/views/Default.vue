@@ -21,27 +21,34 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="grid">
+        <div class="grid">
             <div class="col-12 md:col-8 chart">
-                <div class="grid">
-                    <div class="col-12 md:col-12">
-                        <div class="box">Cacete</div>
-                    </div>
-                    <div class="col-12 md:col-12">
-                        <div class="box">Cacete</div>
-                    </div>
-                    <div class="col-12 md:col-6">
-                        <div class="box">Cacete</div>
-                    </div>
-                    <div class="col-12 md:col-6">
-                        <div class="box">Cacete</div>
+                <div class="bloco">
+                    <div>
+                        <DataTable responsiveLayout="scroll">
+                            <Column field="horario" header="Horário"></Column>
+                            <Column field="numero" header="Número"></Column>
+                            <Column field="cliente" header="Cliente"></Column>
+                            <Column field="bairro" header="Bairro"></Column>
+                            <Column field="valor" header="Valor"></Column>
+                            <Column field="situacao" header="Situação"></Column>
+                        </DataTable>
                     </div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
-                <div class="box pedidos">Cacete</div>
+                <div class="bloco">
+                    <div>
+                        <h1 class="titulo-bairros">Pedidos por Bairro</h1>
+                    </div>
+                    <Chart
+                        type="bar"
+                        :data="basicData"
+                        :options="horizontalOptions"
+                    />
+                </div>
             </div>
-        </div> -->
+        </div>
     </div>
 </template>
 
@@ -60,6 +67,52 @@ export default {
             url: `${baseApiUrl}/bairro/`,
             bairros: [],
             nomesBairros: [],
+            basicData: {
+                labels: [
+                    "Jardim Tropical",
+                    "José de Anchieta",
+                    "Larajeiras Velha",
+                    "Laranjeiras",
+                    "Central Carapina",
+                    "Jardim Limoeiro",
+                    "São Diogo",
+                ],
+                datasets: [
+                    {
+                        label: "Quantidade",
+                        backgroundColor: "#42A5F5",
+                        data: [15, 7, 3, 1, 16, 10, 22],
+                    },
+                ],
+            },
+            horizontalOptions: {
+                indexAxis: "y",
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#495057",
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "#495057",
+                        },
+                        grid: {
+                            color: "#ebedef",
+                        },
+                    },
+                    y: {
+                        ticks: {
+                            color: "#495057",
+                        },
+                        grid: {
+                            color: "#ebedef",
+                        },
+                    },
+                },
+            },
         };
     },
     methods: {
@@ -85,12 +138,8 @@ export default {
 </script>
 
 <style scoped>
-.box {
-    background-color: red;
-}
-
-.pedidos {
-    height: 100%;
+.grid {
+    margin-bottom: 30px;
 }
 
 .card-item {
@@ -129,5 +178,17 @@ export default {
 .valor-descricao {
     margin-top: 30px;
     font-size: 22px;
+}
+
+.bloco {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px,
+        rgba(0, 0, 0, 0.05) 0px 5px 10px;
+    height: 550px;
+    background-color: white;
+    padding: 10px;
+}
+
+.titulo-bairros {
+    margin-bottom: 40px;
 }
 </style>

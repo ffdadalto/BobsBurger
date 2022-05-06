@@ -22,6 +22,7 @@ import Divider from 'primevue/divider';
 import InputMask from 'primevue/inputmask';
 import Calendar from 'primevue/calendar';
 import Editor from 'primevue/editor';
+import Chart from 'primevue/chart';
 
 import 'primevue/resources/themes/saga-blue/theme.css' //theme
 import 'primevue/resources/primevue.min.css' //core css
@@ -50,6 +51,7 @@ app.component('Divider', Divider);
 app.component('InputMask', InputMask);
 app.component('Calendar', Calendar);
 app.component('Editor', Editor);
+app.component('Chart', Chart);
 
 app.directive('tooltip', Tooltip);
 
