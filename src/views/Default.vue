@@ -4,20 +4,35 @@
         <div class="grid">
             <div class="col-12 md:col-4">
                 <div class="card-item green">
-                    <h1 class="valor">36</h1>
-                    <p class="valor-descricao">Pedidos do dia</p>
+                    <div class="card-conteudo">
+                        <h1 class="card-valor">36</h1>
+                        <p class="card-descricao">Pedidos do dia</p>
+                    </div>
+                    <div class="card-icone icone-green">
+                        <i class="pi pi-chart-line"></i>
+                    </div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="card-item orange">
-                    <h1 class="valor">R$ 2.354,59</h1>
-                    <p class="valor-descricao">Receita bruta do dia</p>
+                    <div class="card-conteudo">
+                        <h1 class="card-valor">R$ 3.548.98</h1>
+                        <p class="card-descricao">Vendas Totais do dia</p>
+                    </div>
+                    <div class="card-icone icone-orange">                        
+                        <i class="pi pi-wallet"></i>
+                    </div>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="card-item blue">
-                    <h1 class="valor">X-Tudo</h1>
-                    <p class="valor-descricao">Foi o mais pedido do dia</p>
+                    <div class="card-conteudo">
+                        <h1 class="card-valor">X-Tudo</h1>
+                        <p class="card-descricao">Foi o mais pedido do dia</p>
+                    </div>
+                    <div class="card-icone icone-blue">
+                        <i class="pi pi-star"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -30,7 +45,7 @@
                             <Column field="numero" header="Número"></Column>
                             <Column field="cliente" header="Cliente"></Column>
                             <Column field="bairro" header="Bairro"></Column>
-                            <Column field="valor" header="Valor"></Column>
+                            <Column field="card-valor" header="Valor"></Column>
                             <Column field="situacao" header="Situação"></Column>
                         </DataTable>
                     </div>
@@ -153,6 +168,48 @@ export default {
     -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.35);
     box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.35);
     border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card-conteudo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 80%;
+    z-index: 1;
+}
+
+.card-valor {
+    margin: 0;
+    padding: 0;
+    font-size: 50px;
+    line-height: 35px;
+    font-weight: 600;
+    width: 100%;
+}
+
+.card-icone {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 20%;
+}
+
+.card-icone i {
+    font-size: 100px;
+    font-weight: 100;
+}
+
+.card-descricao {
+    font-size: 22px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-top: 30px;
 }
 
 .green {
@@ -160,9 +217,17 @@ export default {
     border-bottom: 7px solid #318934;
 }
 
+.icone-green {
+    color: #409142;
+}
+
 .orange {
     background-color: #f39c12;
     border-bottom: 7px solid #bf790c;
+}
+
+.icone-orange {
+    color: #cf8511;
 }
 
 .blue {
@@ -170,17 +235,8 @@ export default {
     border-bottom: 7px solid #3786b7;
 }
 
-.valor {
-    margin: 0;
-    padding: 0;
-    font-size: 50px;
-    line-height: 35px;
-    font-weight: 600;
-}
-
-.valor-descricao {
-    margin-top: 30px;
-    font-size: 22px;
+.icone-blue {
+    color: #3b96cd;
 }
 
 .bloco {
