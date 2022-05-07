@@ -55,6 +55,15 @@
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="cor" header="Cor">
+                <template #body="{ data }">
+                    <span
+                        class="situacao-badge"
+                        :style="'background-color: #' + data.cor + ';'"
+                        >{{ data.nome }}</span
+                    >
+                </template></Column
+            >
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
@@ -96,10 +105,9 @@
             class="p-fluid"
         >
             <div class="formgrid grid">
-                <div class="field col-6">
+                <div class="field col-12">
                     <label>Nome</label>
                     <InputText
-                        id="nome"
                         v-model.trim="situacao.nome"
                         required="true"
                         autofocus
@@ -108,6 +116,20 @@
                         }"
                     />
                     <small class="p-error" v-if="submitted && !situacao.nome"
+                        >Campo Obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
+                    <label style="display: block">Cor</label>
+                    <ColorPicker
+                        v-model="situacao.cor"
+                        :inline="true"
+                        required="true"
+                        :class="{
+                            'p-invalid': submitted && !situacao.cor,
+                        }"
+                    />
+                    <small class="p-error" v-if="submitted && !situacao.cor"
                         >Campo Obrigatório.</small
                     >
                 </div>
@@ -310,7 +332,7 @@ export default {
         },
         async salvarSituacao() {
             this.submitted = true;
-            if (this.situacao.nome.trim()) {
+            if (this.situacao.nome.trim() && this.situacao.cor) {
                 if (this.situacao.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
@@ -390,7 +412,6 @@ export default {
 
                 this.situacao = {};
                 this.selectedSituacoes = null;
-
             } catch (error) {
                 console.error(error);
                 this.$toast.add({

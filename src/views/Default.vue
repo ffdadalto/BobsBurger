@@ -185,7 +185,7 @@ export default {
 .card-valor {
     margin: 0;
     padding: 0;
-    font-size: 50px;
+    font-size: 45px;
     line-height: 35px;
     font-weight: 600;
     width: 100%;
@@ -206,7 +206,7 @@ export default {
 }
 
 .card-descricao {
-    font-size: 22px;
+    font-size: 20px;
     width: 100%;
     margin: 0;
     padding: 0;

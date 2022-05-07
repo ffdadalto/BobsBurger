@@ -134,4 +134,14 @@ footer {
 .ativo-radio-button-item > label {
     margin-left: 10px;
 }
+
+.situacao-badge {
+    color: white;
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
 </style>

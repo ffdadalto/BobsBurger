@@ -58,7 +58,15 @@
             <Column field="cliente.nome" header="Cliente"></Column>
             <Column field="valorTotal" header="valorTotal"></Column>
             <Column field="formaPagamento.nome" header="Pagamento"></Column>
-            <Column field="situacao.nome" header="Situacao"></Column>
+            <Column field="situacao.nome" header="Situação">
+                <template #body="{ data }">
+                    <span
+                        class="situacao-badge"
+                        :style="'background-color: #' + data.situacao.cor + ';'"
+                        >{{ data.situacao.nome }}</span
+                    >
+                </template>
+            </Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
                 <template #body="slotProps">
