@@ -13,7 +13,7 @@
       </li>
       <li>
         <router-link to="/Situacao" custom v-slot="{ navigate }">
-          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-list"></i>Situações</div>
+          <div class="div-menu" role="link" @click="navigate"><i class="pi pi-filter"></i>Situações</div>
         </router-link>
       </li>
       <li>

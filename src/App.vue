@@ -137,7 +137,7 @@ footer {
 
 .situacao-badge {
     color: white;
-    border-radius: 2px;
+    border-radius: 5px;
     padding: 0.25em 0.5rem;
     text-transform: uppercase;
     font-weight: 700;

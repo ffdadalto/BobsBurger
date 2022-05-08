@@ -56,7 +56,7 @@
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="numero" header="Número" :sortable="true"></Column>
             <Column field="cliente.nome" header="Cliente"></Column>
-            <Column field="valorTotal" header="valorTotal"></Column>
+            <Column field="valorTotal" header="Valor"></Column>
             <Column field="formaPagamento.nome" header="Pagamento"></Column>
             <Column field="situacao.nome" header="Situação">
                 <template #body="{ data }">
@@ -126,7 +126,7 @@
                     <small
                         class="p-error"
                         v-if="submitted && !clienteSelecionado"
-                        >Cliente é obrigatório</small
+                        >Obrigatório</small
                     >
                 </div>
                 <div class="field col-3">
@@ -135,10 +135,15 @@
                         id="numero"
                         v-model="pedido.numero"
                         required="true"
-                        :class="{ 'p-invalid': submitted && !pedido.numero }"
+                        :class="{
+                            'p-invalid': submitted && pedido.numero == 0,
+                        }"
+                        disabled="true"
                     />
-                    <small class="p-error" v-if="submitted && pedido.numero"
-                        >Número é obrigatório.</small
+                    <small
+                        class="p-error"
+                        v-if="submitted && pedido.numero == 0"
+                        >Obrigatório.</small
                     >
                 </div>
                 <div class="field col-3">
@@ -148,11 +153,13 @@
                         v-model="pedido.valorTotal"
                         required="true"
                         :class="{
-                            'p-invalid': submitted && !pedido.valorTotal,
+                            'p-invalid': submitted && pedido.valorTotal == null,
                         }"
                     />
-                    <small class="p-error" v-if="submitted && pedido.valorTotal"
-                        >Valor Total é obrigatório.</small
+                    <small
+                        class="p-error"
+                        v-if="submitted && pedido.valorTotal == null"
+                        >Obrigatório.</small
                     >
                 </div>
                 <div class="field col-6">
@@ -173,7 +180,7 @@
                     <small
                         class="p-error"
                         v-if="submitted && !formaPagamentoSelecionado"
-                        >Campo obrigatório.</small
+                        >Obrigatório.</small
                     >
                 </div>
                 <div class="field col-6">
@@ -194,7 +201,7 @@
                     <small
                         class="p-error"
                         v-if="submitted && !situacaoSelecionada"
-                        >Campo obrigatório.</small
+                        >Obrigatório.</small
                     >
                 </div>
                 <div class="field">
@@ -343,6 +350,7 @@ export default {
         abrirNovo() {
             this.pedido = {};
             this.pedido.ativo = "1";
+            this.pedido.numero = this.ultimoPedido() + 1;
             this.submitted = false;
             this.pedidoDialog = true;
         },
@@ -400,95 +408,95 @@ export default {
         hideDialog() {
             this.pedidoDialog = false;
             this.submitted = false;
+            this.pedido = null;
             this.clienteSelecionado = null;
+            this.formaPagamentoSelecionado = null;
+            this.situacaoSelecionada = null;
         },
         async salvarPedido() {
             this.submitted = true;
-            if (this.pedido.numero && this.clienteSelecionado) {
-                // Validação
-                if (this.pedido.numero.trim()) {
-                    if (this.pedido.id) {
-                        // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
-                        try {
-                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
 
-                            this.pedido.formaPagamentoId =
-                                this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
+            // Validação
+            if (this.isValid()) {
+                if (this.pedido.id) {
+                    // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
+                    try {
+                        this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
 
-                            this.pedido.situacaoId =
-                                this.situacaoSelecionada.id; // Liga a situação do pedido
+                        this.pedido.formaPagamentoId =
+                            this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
 
-                            const res = await axios.put(
-                                `${this.url}${this.pedido.id}`,
-                                this.pedido
-                            );
+                        this.pedido.situacaoId = this.situacaoSelecionada.id; // Liga a situação do pedido
 
-                            this.getPedidos(); // Refresh na lista
+                        const res = await axios.put(
+                            `${this.url}${this.pedido.id}`,
+                            this.pedido
+                        );
 
-                            this.$toast.add({
-                                severity: "success",
-                                summary: "Sucesso",
-                                detail: `pedido ${this.pedido.numero} atualizado com sucesso!`,
-                                life: 3000,
-                            });
+                        this.getPedidos(); // Refresh na lista
 
-                            this.pedidoDialog = false; // Fecha o pop up
-                            this.pedido = null; // Limpa o objeto
-                            this.clienteSelecionado = null; // Limpa o objeto
-                            this.formaPagamentoSelecionado = null; // Limpa o objeto
-                            this.situacaoSelecionada = null; // Limpa o objeto
-                        } catch (error) {
-                            console.error(error);
-                            this.$toast.add({
-                                severity: "error",
-                                summary: "Erro",
-                                detail: `Não foi possível atualizar o pedido ${this.pedido.numero}!. Erro: ${error}`,
-                                life: 3000,
-                            });
-                        } finally {
-                            this.loading = false;
-                        }
-                    } else {
-                        // Cadastro
-                        try {
-                            this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `pedido ${this.pedido.numero} atualizado com sucesso!`,
+                            life: 3000,
+                        });
 
-                            this.pedido.formaPagamentoId =
-                                this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
+                        this.pedidoDialog = false; // Fecha o pop up
+                        this.pedido = null; // Limpa o objeto
+                        this.clienteSelecionado = null; // Limpa o objeto
+                        this.formaPagamentoSelecionado = null; // Limpa o objeto
+                        this.situacaoSelecionada = null; // Limpa o objeto
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro",
+                            detail: `Não foi possível atualizar o pedido ${this.pedido.numero}!. Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
+                    }
+                } else {
+                    // Cadastro
+                    try {
+                        this.pedido.clienteId = this.clienteSelecionado.id; // Liga a cidade
 
-                            this.pedido.situacaoId =
-                                this.situacaoSelecionada.id; // Liga a situação do pedido
+                        this.pedido.formaPagamentoId =
+                            this.formaPagamentoSelecionado.id; // Liga a forma de pagamento
 
-                            const response = await axios.post(
-                                this.url,
-                                this.pedido
-                            );
+                        this.pedido.situacaoId = this.situacaoSelecionada.id; // Liga a situação do pedido
 
-                            this.$toast.add({
-                                severity: "success",
-                                summary: "Sucesso",
-                                detail: `pedido ${this.pedido.numero} Cadastrado com sucesso!`,
-                                life: 3000,
-                            });
+                        const response = await axios.post(
+                            this.url,
+                            this.pedido
+                        );
 
-                            this.getPedidos(); // Refresh na lista
+                        this.$toast.add({
+                            severity: "success",
+                            summary: "Sucesso",
+                            detail: `pedido ${this.pedido.numero} Cadastrado com sucesso!`,
+                            life: 3000,
+                        });
 
-                            this.pedidoDialog = false; // Fecha o pop up
-                            this.pedido = null; // Limpa o objeto
-                            this.clienteSelecionado = null; // Limpa o objeto
-                            this.formaPagamentoSelecionado = null; // Limpa o objeto
-                            this.situacaoSelecionada = null; // Limpa o objeto
-                        } catch (error) {
-                            console.error(error);
-                            this.$toast.add({
-                                severity: "error",
-                                summary: "Erro no cadastro",
-                                detail: `Não foi possível cadastrar o pedido ${this.pedido.numero}! Erro: ${error}`,
-                                life: 3000,
-                            });
-                        } finally {
-                            this.loading = false;
-                        }
+                        this.getPedidos(); // Refresh na lista
+
+                        this.pedidoDialog = false; // Fecha o pop up
+                        this.pedido = null; // Limpa o objeto
+                        this.clienteSelecionado = null; // Limpa o objeto
+                        this.formaPagamentoSelecionado = null; // Limpa o objeto
+                        this.situacaoSelecionada = null; // Limpa o objeto
+                    } catch (error) {
+                        console.error(error);
+                        this.$toast.add({
+                            severity: "error",
+                            summary: "Erro no cadastro",
+                            detail: `Não foi possível cadastrar o pedido ${this.pedido.numero}! Erro: ${error}`,
+                            life: 3000,
+                        });
+                    } finally {
+                        this.loading = false;
                     }
                 }
             }
@@ -647,6 +655,20 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+
+        ultimoPedido() {
+            const numeros = this.pedidos.map((p) => parseInt(p.numero));
+            return numeros.length > 0 ? Math.max(...numeros) : 0;
+        },
+        isValid() {
+            return (
+                this.clienteSelecionado &&
+                this.formaPagamentoSelecionado &&
+                this.situacaoSelecionada &&
+                this.pedido.numero > 0 &&
+                this.pedido.valorTotal != null
+            );
         },
     },
     mounted() {
