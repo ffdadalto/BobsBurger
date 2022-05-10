@@ -508,8 +508,12 @@ td > button.excluir:hover {
     content: url("../assets/Batatas-Fritas.png");
 }
 
-.foto-2{
+.foto-5{
     content: url("../assets/X-Bacon.png");    
+}
+
+.foto-6{
+    content: url("../assets/X-EggBacon.png");    
 }
 
 .foto-7{
