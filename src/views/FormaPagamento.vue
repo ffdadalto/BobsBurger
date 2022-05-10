@@ -49,7 +49,7 @@
             :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} formasPagamentos"
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} Formas de Pagamnento"
         >
             <Column
                 selectionMode="multiple"

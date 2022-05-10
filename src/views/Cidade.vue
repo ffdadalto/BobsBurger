@@ -353,7 +353,7 @@ export default {
                         this.$toast.add({
                             severity: "success",
                             summary: "Sucesso",
-                            detail: `Cidade ${this.cidade.id} - ${this.cidade.nome} Cadastrado com sucesso`,
+                            detail: `Cidade ${this.cidade.nome} Cadastrado com sucesso`,
                             life: 3000,
                         });
 
