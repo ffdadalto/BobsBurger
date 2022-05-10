@@ -133,7 +133,7 @@
                     <label>Número</label>
                     <InputText
                         id="numero"
-                        v-model="pedido.numero"
+                        v-model.trim="pedido.numero"
                         required="true"
                         :class="{
                             'p-invalid': submitted && pedido.numero == 0,
@@ -150,7 +150,7 @@
                     <label>Valor Total</label>
                     <InputText
                         id="valorTotal"
-                        v-model="pedido.valorTotal"
+                        v-model.trim="pedido.valorTotal"
                         required="true"
                         :class="{
                             'p-invalid': submitted && pedido.valorTotal == null,

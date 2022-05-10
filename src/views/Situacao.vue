@@ -122,7 +122,7 @@
                 <div class="field col-6">
                     <label style="display: block">Cor</label>
                     <ColorPicker
-                        v-model="situacao.cor"
+                        v-model.trim="situacao.cor"
                         :inline="true"
                         required="true"
                         :class="{

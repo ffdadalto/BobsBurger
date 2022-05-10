@@ -49,7 +49,7 @@
             :rows="10"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[10, 20, 40]"
-            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} Formas de Pagamnento"
+            currentPageReportTemplate="Mostrando {first} ao {last} de um total de {totalRecords} Formas de Pagamenntos"
         >
             <Column
                 selectionMode="multiple"
@@ -126,7 +126,7 @@
                     <label>Taxa (%)</label>
                     <InputText
                         id="nome"
-                        v-model="formaPagamento.taxa"
+                        v-model.trim="formaPagamento.taxa"
                         required="true"
                         autofocus
                         :class="{

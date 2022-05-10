@@ -139,7 +139,7 @@
                     <label>Número</label>
                     <InputNumber
                         id="numero"
-                        v-model="cliente.numero"
+                        v-model.trim="cliente.numero"
                         integeronly
                     ></InputNumber>
                 </div>

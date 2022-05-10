@@ -24,7 +24,7 @@
                 <label>Endereço</label>
                 <InputText
                     type="text"
-                    v-model="configuracao.enderecoEmpresa"
+                    v-model.trim="configuracao.enderecoEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid': submitted && !configuracao.enderecoEmpresa,
@@ -39,7 +39,7 @@
             <div class="field col-12 md:col-2">
                 <label>Número</label>
                 <InputNumber
-                    v-model="configuracao.numeroEmpresa"
+                    v-model.trim="configuracao.numeroEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid': submitted && !configuracao.numeroEmpresa,
@@ -55,7 +55,7 @@
                 <label>Bairro</label>
                 <InputText
                     type="text"
-                    v-model="configuracao.bairroEmpresa"
+                    v-model.trim="configuracao.bairroEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid': submitted && !configuracao.bairroEmpresa,
@@ -71,7 +71,7 @@
                 <label>Cidade</label>
                 <InputText
                     type="text"
-                    v-model="configuracao.cidadeEmpresa"
+                    v-model.trim="configuracao.cidadeEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid': submitted && !configuracao.cidadeEmpresa,
@@ -86,7 +86,7 @@
             <div class="field col-12 md:col-1">
                 <label>UF</label>
                 <InputMask
-                    v-model="configuracao.ufEmpresa"
+                    v-model.trim="configuracao.ufEmpresa"
                     mask="a*"
                     class="uf"
                     :disabled="camposDesativados"
@@ -103,7 +103,7 @@
             <div class="field col-12 md:col-2">
                 <label>CEP</label>
                 <InputMask
-                    v-model="configuracao.cepEmpresa"
+                    v-model.trim="configuracao.cepEmpresa"
                     mask="99.999-999"
                     :disabled="camposDesativados"
                     :class="{
@@ -120,7 +120,7 @@
                 <label>Telefone Fixo</label>
                 <InputMask
                     mask="(99) 9999-9999"
-                    v-model="configuracao.telefoneFixoEmpresa"
+                    v-model.trim="configuracao.telefoneFixoEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid':
@@ -137,7 +137,7 @@
                 <label>Celular/WhatsApp</label>
                 <InputMask
                     mask="(99) 99999-9999"
-                    v-model="configuracao.telefoneCelEmpresa"
+                    v-model.trim="configuracao.telefoneCelEmpresa"
                     :disabled="camposDesativados"
                     :class="{
                         'p-invalid':
@@ -154,7 +154,7 @@
                 <label>Horário de Abertura</label>
                 <InputMask
                     mask="99:99"
-                    v-model="configuracao.horarioAtendimentoInicial"
+                    v-model.trim="configuracao.horarioAtendimentoInicial"
                     slotChar="00:00"
                     :disabled="camposDesativados"
                     :class="{
@@ -173,7 +173,7 @@
                 <label>Horário de Fechamento</label>
                 <InputMask
                     mask="99:99"
-                    v-model="configuracao.horarioAtendimentoFinal"
+                    v-model.trim="configuracao.horarioAtendimentoFinal"
                     slotChar="00:00"
                     :disabled="camposDesativados"
                     :class="{
@@ -190,7 +190,7 @@
             <div class="field col-12 md:col-12">
                 <label>Sobre a Empresa</label>
                 <Editor
-                    v-model="configuracao.sobreEmpresa"
+                    v-model.trim="configuracao.sobreEmpresa"
                     editorStyle="height: 320px"                    
                     :class="{
                         'p-invalid': submitted && !configuracao.sobreEmpresa,
