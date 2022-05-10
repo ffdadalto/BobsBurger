@@ -54,7 +54,12 @@
                 :exportable="false"
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="nome" header="Nome" :sortable="true">
+                <template #body="{ data }">
+                    <img :class="'foto-' + data.id" width="55" />
+                    <span class="image-text">{{ data.nome }}</span>
+                </template></Column
+            >
             <Column field="valor" header="Valor"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
@@ -489,5 +494,57 @@ td > button.editar:hover {
 td > button.excluir:hover {
     background: #ad2626;
     border: #ad2626;
+}
+
+.foto-11 {
+    content: url("../assets/Hamburger.png");
+}
+
+.foto-13 {
+    content: url("../assets/X-Burger.png");
+}
+
+.foto-5, .foto-8 {
+    content: url("../assets/Batatas-Fritas.png");
+}
+
+.foto-2{
+    content: url("../assets/X-Bacon.png");    
+}
+
+.foto-7{
+    content: url("../assets/X-Tudo.png");    
+}
+
+.foto-15{
+    content: url("../assets/Double-X-Burger.png");    
+}
+
+.foto-14{
+    content: url("../assets/X-Mendingo.png");    
+}
+
+.foto-12{
+    content: url("../assets/X-Egg.png");    
+}
+
+.foto-16, .foto-17 {
+    content: url("../assets/Agua-Mineral.png");    
+}
+
+.foto-18{
+    content: url("../assets/Sundae-Morango.png");    
+}
+
+.foto-19{
+    content: url("../assets/Sundae-Chocolate.png");    
+}
+
+.foto-20{
+    content: url("../assets/Sundae-Caramelo.png");    
+}
+
+.foto-10, .foto-9{
+    content: url("../assets/Mistro-Triplo.png");    
 }
 </style>

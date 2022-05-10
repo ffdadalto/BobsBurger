@@ -94,8 +94,7 @@ aside {
 }
 
 .container-fluid {
-    background-color: var(--cor-container);
-    height: 100%;
+    background-color: var(--cor-container);    
     -webkit-box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);

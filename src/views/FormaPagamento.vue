@@ -57,7 +57,12 @@
                 :exportable="false"
             ></Column>
             <Column field="id" header="Id" :sortable="true"></Column>
-            <Column field="nome" header="Nome" :sortable="true"></Column>
+            <Column field="nome" header="Nome" :sortable="true">
+                <template #body="{ data }">
+                    <img :class="'foto-' + data.id" width="30" />
+                    <span>{{ data.nome }}</span>
+                </template></Column
+            >
             <Column field="taxa" header="Taxa(%)"></Column>
             <Column field="dataCadastro" header="Cadastrado em"></Column>
             <Column field="ativo" header="Ativo">
@@ -439,7 +444,7 @@ export default {
                 this.selectedFormasPagamentos.forEach((e) => {
                     formasPagamentosIds.push(e.id);
                 });
-                
+
                 // Chama o delete passando o array de Ids
                 const response = await axios.delete(this.url, {
                     data: formasPagamentosIds,
@@ -507,5 +512,17 @@ td > button.editar:hover {
 td > button.excluir:hover {
     background: #ad2626;
     border: #ad2626;
+}
+
+.foto-8{
+    content: url("../assets/Ticket.png");    
+}
+
+.foto-6, .foto-7{
+    content: url("../assets/Cartao.png");    
+}
+
+.foto-5{
+    content: url("../assets/Dinheiro.png");    
 }
 </style>
