@@ -514,15 +514,15 @@ td > button.excluir:hover {
     border: #ad2626;
 }
 
-.foto-8{
+.foto-4{
     content: url("../assets/Ticket.png");    
 }
 
-.foto-6, .foto-7{
+.foto-2, .foto-3{
     content: url("../assets/Cartao.png");    
 }
 
-.foto-5{
+.foto-1{
     content: url("../assets/Dinheiro.png");    
 }
 </style>
