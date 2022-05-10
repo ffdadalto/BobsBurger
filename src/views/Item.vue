@@ -496,15 +496,15 @@ td > button.excluir:hover {
     border: #ad2626;
 }
 
-.foto-11 {
+.foto-1 {
     content: url("../assets/Hamburger.png");
 }
 
-.foto-13 {
+.foto-2 {
     content: url("../assets/X-Burger.png");
 }
 
-.foto-5, .foto-8 {
+.foto-9, .foto-10 {
     content: url("../assets/Batatas-Fritas.png");
 }
 
@@ -516,15 +516,15 @@ td > button.excluir:hover {
     content: url("../assets/X-Tudo.png");    
 }
 
-.foto-15{
+.foto-3{
     content: url("../assets/Double-X-Burger.png");    
 }
 
-.foto-14{
+.foto-8{
     content: url("../assets/X-Mendingo.png");    
 }
 
-.foto-12{
+.foto-4{
     content: url("../assets/X-Egg.png");    
 }
 
@@ -532,19 +532,19 @@ td > button.excluir:hover {
     content: url("../assets/Agua-Mineral.png");    
 }
 
-.foto-18{
+.foto-13{
     content: url("../assets/Sundae-Morango.png");    
 }
 
-.foto-19{
+.foto-14{
     content: url("../assets/Sundae-Chocolate.png");    
 }
 
-.foto-20{
+.foto-15{
     content: url("../assets/Sundae-Caramelo.png");    
 }
 
-.foto-10, .foto-9{
+.foto-11, .foto-12{
     content: url("../assets/Mistro-Triplo.png");    
 }
 </style>
