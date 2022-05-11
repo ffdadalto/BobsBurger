@@ -117,10 +117,9 @@
                 </div>
                 <div class="field col-4">
                     <label>Telefone</label>
-                    <InputText
-                        id="telefone"
+                    <InputMask
+                        mask="(99) 99999-9999"
                         v-model.trim="cliente.telefone"
-                        required="true"
                         :class="{ 'p-invalid': submitted && !cliente.telefone }"
                     />
                     <small class="p-error" v-if="submitted && !cliente.telefone"
@@ -128,8 +127,14 @@
                     >
                 </div>
                 <div class="field col-3">
-                    <label>CEP</label>
-                    <InputText id="cep" v-model.trim="cliente.cep" />
+                    <label>CEP</label>                    
+                    <InputMask
+                        v-model.trim="cliente.cep"
+                        mask="99.999-999"
+                        :class="{
+                            'p-invalid': submitted && !cliente.cep,
+                        }"
+                    />
                 </div>
                 <div class="field col-7">
                     <label>Endereço</label>
@@ -139,7 +144,7 @@
                     <label>Número</label>
                     <InputNumber
                         id="numero"
-                        v-model.trim="cliente.numero"
+                        v-model="cliente.numero"
                         integeronly
                     ></InputNumber>
                 </div>

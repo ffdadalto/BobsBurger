@@ -119,7 +119,7 @@
                     <label>Valor do Item</label>
                     <InputText
                         id="nome"
-                        v-model.trim="item.valor"
+                        v-model.trim.number="item.valor"
                         required="true"
                         autofocus
                         :class="{ 'p-invalid': submitted && !item.valor }"
@@ -420,7 +420,7 @@ export default {
             this.item = item;
             this.deleteItemDialog = true;
         },
-        // Metodo para deletar varios clientes
+        // Metodo para deletar varios itens
         async deleteSelectedItens() {
             try {
                 let itensIds = [];

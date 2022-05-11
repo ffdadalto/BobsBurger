@@ -56,7 +56,11 @@
             <Column field="id" header="Id" :sortable="true"></Column>
             <Column field="numero" header="Número" :sortable="true"></Column>
             <Column field="cliente.nome" header="Cliente"></Column>
-            <Column field="valorTotal" header="Valor"></Column>
+            <Column field="valorTotal" header="Valor">
+                <!-- <template #body="{ data }">
+                    <span>{{ data.valorTotal | brl }}</span>
+                </template> -->
+            </Column>
             <Column field="formaPagamento.nome" header="Pagamento"></Column>
             <Column field="situacao.nome" header="Situação">
                 <template #body="{ data }">
@@ -133,7 +137,7 @@
                     <label>Número</label>
                     <InputText
                         id="numero"
-                        v-model.trim="pedido.numero"
+                        v-model.trim.number="pedido.numero"
                         required="true"
                         :class="{
                             'p-invalid': submitted && pedido.numero == 0,
@@ -322,7 +326,7 @@ const axios = require("axios");
 
 export default {
     name: "pedido",
-    components: { TituloPagina },
+    components: { TituloPagina },    
     data() {
         return {
             pedidos: [],
