@@ -239,12 +239,8 @@
     </div>
 </template>
 
-
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Bairro",
@@ -260,7 +256,7 @@ export default {
             deleteBairrosDialog: false,
             deleteBairroDialog: false,
             selectedBairros: null,
-            url: `${baseApiUrl}/bairro/`,
+            url: "/bairro/",
             cidadeSelecionada: null,
             cidadesFiltradas: [],
             cidades: [],
@@ -278,7 +274,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.bairros = response.data;
                     } catch (error) {
                         console.error(error);
@@ -288,7 +284,9 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}ativo`
+                        );
                         this.bairros = response.data;
                     } catch (error) {
                         console.error(error);
@@ -298,7 +296,9 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}inativo`
+                        );
                         this.bairros = response.data;
                     } catch (error) {
                         console.error(error);
@@ -308,7 +308,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.bairros = response.data;
                     } catch (error) {
                         console.error(error);
@@ -339,7 +339,7 @@ export default {
                         try {
                             this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
 
-                            const res = await axios.put(
+                            const res = await this.$axios.put(
                                 `${this.url}${this.bairro.id}`,
                                 this.bairro
                             );
@@ -372,7 +372,7 @@ export default {
                         try {
                             this.bairro.cidadeId = this.cidadeSelecionada.id; // Liga a cidade escolhia ao Bairro
 
-                            const response = await axios.post(
+                            const response = await this.$axios.post(
                                 this.url,
                                 this.bairro
                             );
@@ -406,12 +406,10 @@ export default {
         },
         async deleteBairro() {
             try {
-                const response = await axios.delete(
-                    `${this.url}${this.bairro.id}`
-                );
-                this.bairros = this.bairros.filter(
-                    (val) => val.id !== this.bairro.id
-                );
+                await this.$axios.delete(`${this.url}${this.bairro.id}`);
+
+                this.getBairros();
+
                 this.deleteBairroDialog = false;
                 this.$toast.add({
                     severity: "success",
@@ -445,13 +443,11 @@ export default {
                     bairrosIds.push(e.id);
                 });
 
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: bairrosIds,
                 });
 
-                this.bairros = this.bairros.filter(
-                    (val) => !this.selectedBairros.includes(val)
-                );
+                this.getBairros();
 
                 this.deleteBairrosDialog = false;
                 this.selectedBairros = null;
@@ -481,17 +477,6 @@ export default {
 
             this.bairroDialog = true;
         },
-        findIndexById(id) {
-            let index = -1;
-            for (let i = 0; i < this.bairros.length; i++) {
-                if (this.bairros[i].id === id) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        },
         procurarCidade(event) {
             setTimeout(() => {
                 if (!event.query.trim().length) {
@@ -507,7 +492,7 @@ export default {
         },
         async getCidades() {
             try {
-                const response = await axios.get(`${baseApiUrl}/cidade/`);
+                const response = await this.$axios.get("/cidade");
                 this.cidades = response.data;
             } catch (error) {
                 console.error(error);

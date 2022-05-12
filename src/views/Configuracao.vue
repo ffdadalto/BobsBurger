@@ -191,7 +191,7 @@
                 <label>Sobre a Empresa</label>
                 <Editor
                     v-model.trim="configuracao.sobreEmpresa"
-                    editorStyle="height: 320px"                    
+                    editorStyle="height: 320px"
                     :class="{
                         'p-invalid': submitted && !configuracao.sobreEmpresa,
                     }"
@@ -227,16 +227,13 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Configuracao",
     components: { TituloPagina },
     data() {
         return {
-            url: `${baseApiUrl}/configuracao/`,
+            url: "/configuracao/",
             configuracao: {},
             loading: false,
             camposDesativados: true,
@@ -246,7 +243,7 @@ export default {
     methods: {
         async getConfiguracao() {
             try {
-                const response = await axios.get(this.url);
+                const response = await this.$axios.get(this.url);
 
                 if (response.data.length > 0)
                     this.configuracao = response.data.shift();
@@ -270,7 +267,7 @@ export default {
                         this.configuracao.ufEmpresa =
                             this.configuracao.ufEmpresa.toUpperCase();
 
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.configuracao.id}`,
                             this.configuracao
                         );
@@ -301,7 +298,7 @@ export default {
                         this.configuracao.ufEmpresa =
                             this.configuracao.ufEmpresa.toUpperCase();
 
-                        await axios.post(this.url, this.configuracao);
+                        await this.$axios.post(this.url, this.configuracao);
 
                         this.camposDesativados = true;
 

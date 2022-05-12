@@ -223,9 +223,8 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
 
-const axios = require("axios");
+// const axios = require("axios");
 
 export default {
     name: "Cidade",
@@ -241,7 +240,8 @@ export default {
             deleteCidadesDialog: false,
             deleteCidadeDialog: false,
             selectedCidades: null,
-            url: `${baseApiUrl}/cidade/`,
+            // url: `${baseApiUrl}/cidade/`,
+            url: "/cidade/",
             filtro: "todos",
         };
     },
@@ -256,7 +256,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.cidades = response.data;
                     } catch (error) {
                         console.error(error);
@@ -266,7 +266,9 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}ativo`
+                        );
                         this.cidades = response.data;
                     } catch (error) {
                         console.error(error);
@@ -276,7 +278,9 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}inativo`
+                        );
                         this.cidades = response.data;
                     } catch (error) {
                         console.error(error);
@@ -286,7 +290,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.cidades = response.data;
                     } catch (error) {
                         console.error(error);
@@ -313,7 +317,7 @@ export default {
                 if (this.cidade.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.cidade.id}`,
                             this.cidade
                         );
@@ -343,10 +347,7 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(
-                            this.url,
-                            this.cidade
-                        );
+                        await this.$axios.post(this.url, this.cidade);
 
                         this.getCidades(); // Refresh na lista
 
@@ -375,9 +376,7 @@ export default {
         },
         async deleteCidade() {
             try {
-                const response = await axios.delete(
-                    `${this.url}${this.cidade.id}`
-                );
+                await this.$axios.delete(`${this.url}${this.cidade.id}`);
 
                 this.getCidades(); // Refresh na lista
 
@@ -414,7 +413,7 @@ export default {
                     cidadesIds.push(e.id);
                 });
 
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: cidadesIds,
                 });
 

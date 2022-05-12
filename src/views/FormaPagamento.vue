@@ -252,9 +252,6 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "FormaPagamento",
@@ -270,7 +267,7 @@ export default {
             deleteFormasPagamentosDialog: false,
             deleteFormaPagamentoDialog: false,
             selectedFormasPagamentos: null,
-            url: `${baseApiUrl}/formaPagamento/`,
+            url: "/formaPagamento/",
             filtro: "todos",
         };
     },
@@ -285,7 +282,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -295,7 +292,7 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(`${this.url}ativo`);
                         this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -305,7 +302,7 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(`${this.url}inativo`);
                         this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -315,7 +312,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.formasPagamentos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -342,7 +339,7 @@ export default {
                 if (this.formaPagamento.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.formaPagamento.id}`,
                             this.formaPagamento
                         );
@@ -372,7 +369,7 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(
+                        const response = await this.$axios.post(
                             this.url,
                             this.formaPagamento
                         );
@@ -404,7 +401,7 @@ export default {
         },
         async deleteFormaPagamento() {
             try {
-                const response = await axios.delete(
+                const response = await this.$axios.delete(
                     `${this.url}${this.formaPagamento.id}`
                 );
 
@@ -446,7 +443,7 @@ export default {
                 });
 
                 // Chama o delete passando o array de Ids
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: formasPagamentosIds,
                 });
 
@@ -514,15 +511,16 @@ td > button.excluir:hover {
     border: #ad2626;
 }
 
-.foto-4{
-    content: url("../assets/Ticket.png");    
+.foto-4 {
+    content: url("../assets/Ticket.png");
 }
 
-.foto-2, .foto-3{
-    content: url("../assets/Cartao.png");    
+.foto-2,
+.foto-3 {
+    content: url("../assets/Cartao.png");
 }
 
-.foto-1{
-    content: url("../assets/Dinheiro.png");    
+.foto-1 {
+    content: url("../assets/Dinheiro.png");
 }
 </style>

@@ -241,9 +241,6 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Item",
@@ -258,7 +255,7 @@ export default {
             deleteItensDialog: false,
             deleteItemDialog: false,
             selectedItens: null,
-            url: `${baseApiUrl}/item/`,
+            url: '/item/',
             filtro: "todos",
         };
     },
@@ -273,7 +270,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.itens = response.data;
                     } catch (error) {
                         console.error(error);
@@ -283,7 +280,7 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(`${this.url}ativo`);
                         this.itens = response.data;
                     } catch (error) {
                         console.error(error);
@@ -293,7 +290,7 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(`${this.url}inativo`);
                         this.itens = response.data;
                     } catch (error) {
                         console.error(error);
@@ -303,7 +300,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.itens = response.data;
                     } catch (error) {
                         console.error(error);
@@ -330,7 +327,7 @@ export default {
                 if (this.item.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.item.id}`,
                             this.item
                         );
@@ -360,7 +357,7 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(this.url, this.item);
+                        const response = await this.$axios.post(this.url, this.item);
 
                         this.getItens(); // Refresh na lista
 
@@ -389,7 +386,7 @@ export default {
         },
         async deleteItem() {
             try {
-                const response = await axios.delete(
+                const response = await this.$axios.delete(
                     `${this.url}${this.item.id}`
                 );
 
@@ -428,7 +425,7 @@ export default {
                     itensIds.push(e.id);
                 });
 
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: itensIds,
                 });
 

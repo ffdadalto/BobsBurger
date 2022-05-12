@@ -37,15 +37,13 @@
 </template>
 
 <script>
-import { baseApiUrl } from "@/global";
-const axios = require("axios");
 
 export default {
     name: "Rodape",
     props: {},
     data() {
         return {
-            url: `${baseApiUrl}/configuracao/`,
+            url: '/configuracao/',
             configuracao: {},
             anoCorrente: new Date().getFullYear(),
         };
@@ -53,7 +51,7 @@ export default {
     methods: {
         async getConfiguracao() {
             try {
-                const response = await axios.get(this.url);
+                const response = await this.$axios.get(this.url);
 
                 if (response.data.length > 0)
                     this.configuracao = response.data.shift();

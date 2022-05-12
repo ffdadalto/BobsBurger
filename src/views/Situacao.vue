@@ -246,9 +246,6 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Situacao",
@@ -264,7 +261,7 @@ export default {
             deleteSituacoesDialog: false,
             deleteSituacaoDialog: false,
             selectedSituacoes: null,
-            url: `${baseApiUrl}/situacao/`,
+            url: "/situacao/",
             filtro: "todos",
         };
     },
@@ -279,7 +276,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -289,7 +286,7 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(`${this.url}ativo`);
                         this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -299,7 +296,7 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(`${this.url}inativo`);
                         this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -309,7 +306,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.situacoes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -336,7 +333,7 @@ export default {
                 if (this.situacao.id) {
                     // Caso o objeto vier com um id é edição, caso não vier, é cadastro.
                     try {
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.situacao.id}`,
                             this.situacao
                         );
@@ -366,7 +363,7 @@ export default {
                 } else {
                     // Cadastro
                     try {
-                        const response = await axios.post(
+                        const response = await this.$axios.post(
                             this.url,
                             this.situacao
                         );
@@ -398,7 +395,7 @@ export default {
         },
         async deleteSituacao() {
             try {
-                await axios.delete(`${this.url}${this.situacao.id}`);
+                await this.$axios.delete(`${this.url}${this.situacao.id}`);
 
                 this.getSituacoes(); // Refresh na lista
 
@@ -439,7 +436,7 @@ export default {
                 });
 
                 // Chama o delete passando o array de Ids
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: situacoesIds,
                 });
 

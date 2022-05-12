@@ -127,7 +127,7 @@
                     >
                 </div>
                 <div class="field col-3">
-                    <label>CEP</label>                    
+                    <label>CEP</label>
                     <InputMask
                         v-model.trim="cliente.cep"
                         mask="99.999-999"
@@ -319,9 +319,6 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Cliente",
@@ -337,7 +334,7 @@ export default {
             deleteClientesDialog: false,
             deleteClienteDialog: false,
             selectedClientes: null,
-            url: `${baseApiUrl}/cliente/`,
+            url: "/cliente/",
             cidadeSelecionada: null,
             cidadesFiltradas: [],
             cidades: [],
@@ -353,7 +350,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.clientes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -363,7 +360,9 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}ativo`
+                        );
                         this.clientes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -373,7 +372,9 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}inativo`
+                        );
                         this.clientes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -383,7 +384,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.clientes = response.data;
                     } catch (error) {
                         console.error(error);
@@ -424,7 +425,7 @@ export default {
                         if (this.cidadeSelecionada)
                             this.cliente.cidadeId = this.cidadeSelecionada.id;
 
-                        await axios.put(
+                        await this.$axios.put(
                             `${this.url}${this.cliente.id}`,
                             this.cliente
                         );
@@ -462,7 +463,7 @@ export default {
                         if (this.cidadeSelecionada)
                             this.cliente.cidadeId = this.cidadeSelecionada.id;
 
-                        await axios.post(this.url, this.cliente);
+                        await this.$axios.post(this.url, this.cliente);
 
                         this.getClientes(); // Refresh na lista
 
@@ -503,12 +504,10 @@ export default {
         // Metodo para deletar um unico cliente
         async deleteCliente() {
             try {
-                const response = await axios.delete(
-                    `${this.url}${this.cliente.id}`
-                );
-                this.clientes = this.clientes.filter(
-                    (val) => val.id !== this.cliente.id
-                );
+                await this.$axios.delete(`${this.url}${this.cliente.id}`);
+
+               this.getClientes();
+
                 this.deleteClienteDialog = false;
                 this.$toast.add({
                     severity: "success",
@@ -539,13 +538,11 @@ export default {
                     clientesIds.push(e.id);
                 });
 
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: clientesIds,
                 });
 
-                this.clientes = this.clientes.filter(
-                    (val) => !this.selectedClientes.includes(val)
-                );
+                this.getClientes();
 
                 this.deleteClientesDialog = false;
                 this.selectedClientes = null;
@@ -599,7 +596,7 @@ export default {
         },
         async getCidades() {
             try {
-                const response = await axios.get(`${baseApiUrl}/cidade/`);
+                const response = await this.$axios.get('/cidade');
                 this.cidades = response.data;
             } catch (error) {
                 console.error(error);

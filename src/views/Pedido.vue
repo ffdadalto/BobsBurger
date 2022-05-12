@@ -320,13 +320,10 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "pedido",
-    components: { TituloPagina },    
+    components: { TituloPagina },
     data() {
         return {
             pedidos: [],
@@ -337,7 +334,7 @@ export default {
             deletePedidosDialog: false,
             deletePedidoDialog: false,
             selectedPedidos: null,
-            url: `${baseApiUrl}/pedido/`,
+            url: "/pedido/",
             clienteSelecionado: null,
             formaPagamentoSelecionado: null,
             situacaoSelecionada: null,
@@ -362,7 +359,7 @@ export default {
             switch (this.filtro) {
                 case "todos":
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.pedidos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -372,7 +369,9 @@ export default {
                     break;
                 case "ativos":
                     try {
-                        const response = await axios.get(`${this.url}ativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}ativo`
+                        );
                         this.pedidos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -382,7 +381,9 @@ export default {
                     break;
                 case "inativos":
                     try {
-                        const response = await axios.get(`${this.url}inativo`);
+                        const response = await this.$axios.get(
+                            `${this.url}inativo`
+                        );
                         this.pedidos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -392,7 +393,7 @@ export default {
                     break;
                 default:
                     try {
-                        const response = await axios.get(this.url);
+                        const response = await this.$axios.get(this.url);
                         this.pedidos = response.data;
                     } catch (error) {
                         console.error(error);
@@ -432,7 +433,7 @@ export default {
 
                         this.pedido.situacaoId = this.situacaoSelecionada.id; // Liga a situação do pedido
 
-                        const res = await axios.put(
+                        const res = await this.$axios.put(
                             `${this.url}${this.pedido.id}`,
                             this.pedido
                         );
@@ -472,10 +473,9 @@ export default {
 
                         this.pedido.situacaoId = this.situacaoSelecionada.id; // Liga a situação do pedido
 
-                        const response = await axios.post(
-                            this.url,
-                            this.pedido
-                        );
+                        await this.$axios.post(this.url, this.pedido);
+
+                        this.getPedidos(); // Refresh na lista
 
                         this.$toast.add({
                             severity: "success",
@@ -483,8 +483,6 @@ export default {
                             detail: `pedido ${this.pedido.numero} Cadastrado com sucesso!`,
                             life: 3000,
                         });
-
-                        this.getPedidos(); // Refresh na lista
 
                         this.pedidoDialog = false; // Fecha o pop up
                         this.pedido = null; // Limpa o objeto
@@ -507,12 +505,12 @@ export default {
         },
         async deletePedido() {
             try {
-                const response = await axios.delete(
+                const response = await this.$axios.delete(
                     `${this.url}${this.pedido.id}`
                 );
-                this.pedidos = this.pedidos.filter(
-                    (val) => val.id !== this.pedido.id
-                );
+
+                this.getPedidos();
+
                 this.deletePedidoDialog = false;
                 this.$toast.add({
                     severity: "success",
@@ -546,13 +544,11 @@ export default {
                     pedidosIds.push(e.id);
                 });
 
-                const response = await axios.delete(this.url, {
+                const response = await this.$axios.delete(this.url, {
                     data: pedidosIds,
                 });
 
-                this.pedidos = this.pedidos.filter(
-                    (val) => !this.selectedPedidos.includes(val)
-                );
+                this.getPedidos();
 
                 this.deletePedidosDialog = false;
                 this.selectedPedidos = null;
@@ -629,7 +625,7 @@ export default {
         },
         async getClientes() {
             try {
-                const response = await axios.get(`${baseApiUrl}/cliente/`);
+                const response = await this.$axios.get("/cliente");
                 this.clientes = response.data;
             } catch (error) {
                 console.error(error);
@@ -639,9 +635,7 @@ export default {
         },
         async getFormasPagamentos() {
             try {
-                const response = await axios.get(
-                    `${baseApiUrl}/formaPagamento/`
-                );
+                const response = await this.$axios.get("/formaPagamento");
                 this.formasPagamentos = response.data;
             } catch (error) {
                 console.error(error);
@@ -652,7 +646,7 @@ export default {
 
         async getSituacoes() {
             try {
-                const response = await axios.get(`${baseApiUrl}/situacao/`);
+                const response = await this.$axios.get("/situacao");
                 this.situacoes = response.data;
             } catch (error) {
                 console.error(error);

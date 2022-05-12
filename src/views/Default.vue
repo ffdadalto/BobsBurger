@@ -19,7 +19,7 @@
                         <h1 class="card-valor">R$ 3.548.98</h1>
                         <p class="card-descricao">Vendas Totais do dia</p>
                     </div>
-                    <div class="card-icone icone-orange">                        
+                    <div class="card-icone icone-orange">
                         <i class="pi pi-wallet"></i>
                     </div>
                 </div>
@@ -46,7 +46,10 @@
                             <Column field="cliente" header="Cliente"></Column>
                             <Column field="bairro" header="Bairro"></Column>
                             <Column field="valor" header="Valor"></Column>
-                            <Column field="formaPagamento.nome" header="Pagamento"></Column>
+                            <Column
+                                field="formaPagamento.nome"
+                                header="Pagamento"
+                            ></Column>
                             <Column field="situacao" header="Situação"></Column>
                         </DataTable>
                     </div>
@@ -71,16 +74,13 @@
 
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
-import { baseApiUrl } from "@/global";
-
-const axios = require("axios");
 
 export default {
     name: "Default",
     components: { TituloPagina },
     data() {
         return {
-            url: `${baseApiUrl}/bairro/`,
+            url: "/bairro/",
             bairros: [],
             nomesBairros: [],
             basicData: {
@@ -137,14 +137,14 @@ export default {
     methods: {
         async getBairros() {
             try {
-                const response = await axios.get(this.url);
+                const response = await this.$axios.get(this.url);
                 this.bairros = response.data;
             } catch (error) {
                 console.error(error);
             }
         },
         getNames() {
-            let aux = this.bairros.map((v) => {
+            this.bairros.map((v) => {
                 return v.nome;
             });
         },

@@ -11,22 +11,19 @@
 <script>
 import TituloPagina from "@/components/TituloPagina.vue";
 
-import { baseApiUrl } from "@/global";
-const axios = require("axios");
-
 export default {
     name: "Sobre",
     components: { TituloPagina },
     data() {
         return {
-            url: `${baseApiUrl}/configuracao/sobre`,
+            url: '/configuracao/sobre',
             sobreEmpresa: "",
         };
     },
     methods: {
         async getConfiguracao() {
             try {
-                const response = await axios.get(this.url);
+                const response = await this.$axios.get(this.url);
 
                 if (response.data.length > 0)
                     this.sobreEmpresa = response.data.shift().sobreEmpresa;
