@@ -1,16 +1,19 @@
 <template>
-    <header>
-        <Cabecalho></Cabecalho>
-    </header>
-    <aside>
-        <MenuLateral></MenuLateral>
-    </aside>
-    <div class="content">
-        <router-view />
+    <div class="estrutura-portal" v-if="usuarioLogado">
+        <header>
+            <Cabecalho></Cabecalho>
+        </header>
+        <aside>
+            <MenuLateral></MenuLateral>
+        </aside>
+        <div class="content">
+            <router-view></router-view>
+        </div>
+        <footer>
+            <Rodape></Rodape>
+        </footer>
     </div>
-    <footer>
-        <Rodape></Rodape>
-    </footer>
+    <router-view v-else name="login"></router-view>
 </template>
 
 <script>
@@ -23,6 +26,11 @@ export default {
         Cabecalho,
         Rodape,
         MenuLateral,
+    },
+    data() {
+        return {
+            usuarioLogado: true,
+        };
     },
 };
 </script>
@@ -57,7 +65,7 @@ export default {
     -moz-osx-font-smoothing: grayscale;
 }
 
-#app {
+.estrutura-portal {
     display: grid;
     grid-template-columns: var(--menu-width) 1fr;
     grid-template-rows: var(--header-height) 1fr var(--footer-height);
@@ -94,7 +102,7 @@ aside {
 }
 
 .container-fluid {
-    background-color: var(--cor-container);    
+    background-color: var(--cor-container);
     -webkit-box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 10px -7px rgba(0, 0, 0, 0.75);

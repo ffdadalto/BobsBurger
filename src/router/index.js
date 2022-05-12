@@ -10,9 +10,11 @@ import Bairro from '../views/Bairro.vue'
 import Cidade from '../views/Cidade.vue'
 import Configuracao from '../views/Configuracao.vue'
 import Sobre from '../views/Sobre.vue'
+import Erro404 from '../views/404.vue'
+import Login from '../views/login.vue'
 
 const routes = [
-    { path: '/', component: Default },
+    { path: '/', component: Default, name: 'home' },
     { path: '/Pedido', component: Pedido },
     { path: '/Item', component: Item },
     { path: '/Situacao', component: Situacao },
@@ -21,7 +23,16 @@ const routes = [
     { path: '/Bairro', component: Bairro },
     { path: '/Cidade', component: Cidade },
     { path: '/Configuracao', component: Configuracao },
-    { path: '/Sobre', component: Sobre }
+    { path: '/Sobre', component: Sobre },
+    { path: '/Erro404', component: Erro404 },
+    {
+        path: '/Login',
+        components: {
+            login: Login
+        }
+    },
+
+    { path: '/:catchAll(.*)', redirect: '/Erro404' } // Qualquer url invalida é redirecionada para a pagina de Error 404
 ]
 
 const router = createRouter({

@@ -25,6 +25,7 @@ import Calendar from 'primevue/calendar';
 import Editor from 'primevue/editor';
 import Chart from 'primevue/chart';
 import ColorPicker from 'primevue/colorpicker';
+import Password from 'primevue/password';
 
 import 'primevue/resources/themes/saga-blue/theme.css' //theme
 import 'primevue/resources/primevue.min.css' //core css
@@ -43,7 +44,13 @@ const axiosInstance = axios.create({
 })
 
 const app = createApp(App);
-app.use(PrimeVue);
+app.use(PrimeVue, {
+    locale: {
+        weak: 'Senha Fraca!',
+        medium: 'Senha Boa!',
+        strong: 'Senha Muito Boa!',
+    }
+});
 app.use(ToastService);
 app.use(router);
 app.config.globalProperties.$axios = {...axiosInstance }
@@ -66,6 +73,7 @@ app.component('Calendar', Calendar);
 app.component('Editor', Editor);
 app.component('Chart', Chart);
 app.component('ColorPicker', ColorPicker);
+app.component('Password', Password);
 
 app.directive('tooltip', Tooltip);
 

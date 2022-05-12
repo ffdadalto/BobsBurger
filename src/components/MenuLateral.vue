@@ -8,7 +8,7 @@
                         role="link"
                         @click="navigate"
                     >
-                        <i class="pi pi-chart-line"></i>Dashboard
+                        <i class="pi pi-home"></i>Home
                     </div>
                 </router-link>
             </li>
@@ -54,7 +54,11 @@
                 </router-link>
             </li>
             <li>
-                <router-link to="/Cliente" custom v-slot="{ navigate, isActive }">
+                <router-link
+                    to="/Cliente"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
                     <div
                         :class="['div-menu', isActive && 'router-link-active']"
                         role="link"
@@ -65,7 +69,11 @@
                 </router-link>
             </li>
             <li>
-                <router-link to="/FormaPagamento" custom v-slot="{ navigate, isActive }">
+                <router-link
+                    to="/FormaPagamento"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
                     <div
                         :class="['div-menu', isActive && 'router-link-active']"
                         role="link"
@@ -76,7 +84,11 @@
                 </router-link>
             </li>
             <li>
-                <router-link to="/Bairro" custom v-slot="{ navigate, isActive }">
+                <router-link
+                    to="/Bairro"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
                     <div
                         :class="['div-menu', isActive && 'router-link-active']"
                         role="link"
@@ -87,7 +99,11 @@
                 </router-link>
             </li>
             <li>
-                <router-link to="/Cidade" custom v-slot="{ navigate, isActive }">
+                <router-link
+                    to="/Cidade"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
                     <div
                         :class="['div-menu', isActive && 'router-link-active']"
                         role="link"
@@ -98,7 +114,11 @@
                 </router-link>
             </li>
             <li>
-                <router-link to="/Configuracao" custom v-slot="{ navigate, isActive }">
+                <router-link
+                    to="/Configuracao"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
                     <div
                         :class="['div-menu', isActive && 'router-link-active']"
                         role="link"

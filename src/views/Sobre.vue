@@ -16,7 +16,7 @@ export default {
     components: { TituloPagina },
     data() {
         return {
-            url: '/configuracao/sobre',
+            url: "/configuracao/sobre",
             sobreEmpresa: "",
         };
     },
