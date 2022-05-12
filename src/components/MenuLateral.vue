@@ -2,71 +2,119 @@
     <div class="menu-lateral">
         <ul>
             <li>
-                <router-link to="/" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-chart-line"></i>Dashboard
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Pedido" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link
+                    to="/Pedido"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-list"></i>Pedidos
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Situacao" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link
+                    to="/Situacao"
+                    custom
+                    v-slot="{ navigate, isActive }"
+                >
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-filter"></i>Situações
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Item" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Item" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-shopping-cart"></i>Itens
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Cliente" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Cliente" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-user"></i>Clientes
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/FormaPagamento" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/FormaPagamento" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-dollar"></i>Formas de Pagamento
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Bairro" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Bairro" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-map-marker"></i>Bairros
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Cidade" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Cidade" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-compass"></i>Cidades
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Configuracao" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Configuracao" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-cog"></i>Configurações
                     </div>
                 </router-link>
             </li>
             <li>
-                <router-link to="/Sobre" custom v-slot="{ navigate }">
-                    <div class="div-menu" role="link" @click="navigate">
+                <router-link to="/Sobre" custom v-slot="{ navigate, isActive }">
+                    <div
+                        :class="['div-menu', isActive && 'router-link-active']"
+                        role="link"
+                        @click="navigate"
+                    >
                         <i class="pi pi-info-circle"></i>Sobre
                     </div>
                 </router-link>
@@ -104,6 +152,10 @@ ul {
 }
 
 .div-menu:hover {
-    background-color: #2f4550;
+    background-color: #416272;
+}
+
+.router-link-active {
+    background-color: #416272;
 }
 </style>

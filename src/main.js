@@ -34,11 +34,13 @@ import 'primeflex/primeflex.min.css' //FlexGrid
 // Instanciando o axios de forma global
 const axiosInstance = axios.create({
     withCredentials: false,
+    baseURL: 'http://localhost:8080/api', // Definindo a url base
+
+    // // Caso necessite de autorização
+    // headers: {
+    //     'Authorization': '123456'
+    // }
 })
-
-// Definindo a url base
-axiosInstance.defaults.baseURL = 'http://localhost:8080/api';
-
 
 const app = createApp(App);
 app.use(PrimeVue);
