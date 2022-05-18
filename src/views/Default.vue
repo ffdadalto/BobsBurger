@@ -1,6 +1,7 @@
 <template>
     <TituloPagina titulo="Dashboard"></TituloPagina>
     <div class="container-fluid">
+        <h1>{{ usuarioLogado }}</h1>
         <div class="grid">
             <div class="col-12 md:col-4">
                 <div class="card-item green">
@@ -133,6 +134,11 @@ export default {
                 },
             },
         };
+    },
+    computed: {
+        usuarioLogado() {
+            return this.$store.state.usuarioLogado;
+        },
     },
     methods: {
         async getBairros() {

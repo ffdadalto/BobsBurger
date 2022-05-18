@@ -12,6 +12,7 @@ import Configuracao from '../views/Configuracao.vue'
 import Sobre from '../views/Sobre.vue'
 import Erro404 from '../views/404.vue'
 import Login from '../views/login.vue'
+import UsuarioCadastro from '../views/usuarioCadastro.vue'
 
 const routes = [
     { path: '/', component: Default, name: 'home' },
@@ -29,7 +30,15 @@ const routes = [
         path: '/Login',
         components: {
             login: Login
-        }
+        },
+        name: 'login'
+    },
+    {
+        path: '/UsuarioCadastro',
+        components: {
+            usuarioCadastro: UsuarioCadastro,
+        },
+        name: 'UsuarioCadastro'
     },
 
     { path: '/:catchAll(.*)', redirect: '/Erro404' } // Qualquer url invalida é redirecionada para a pagina de Error 404

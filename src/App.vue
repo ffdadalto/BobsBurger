@@ -14,6 +14,7 @@
         </footer>
     </div>
     <router-view v-else name="login"></router-view>
+    <router-view name="usuarioCadastro"></router-view>
 </template>
 
 <script>
@@ -28,9 +29,13 @@ export default {
         MenuLateral,
     },
     data() {
-        return {
-            usuarioLogado: true,
+        return {            
         };
+    },
+    computed: {
+        usuarioLogado() {
+            return this.$store.state.usuarioLogado;
+        },
     },
 };
 </script>

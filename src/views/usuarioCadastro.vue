@@ -7,6 +7,36 @@
             <div class="box-form">
                 <div class="formgrid grid">
                     <div class="field col-12">
+                        <label>Nome</label>
+                        <InputText
+                            v-model.trim="usuario.nome"
+                            required="true"
+                            autofocus
+                            :class="{
+                                'p-invalid': submitted && !usuario.nome,
+                            }"
+                        />
+                        <small class="p-error" v-if="submitted && !usuario.nome"
+                            >Obrigatório.</small
+                        >
+                    </div>
+                    <div class="field col-12">
+                        <label>E-Mail</label>
+                        <InputText
+                            v-model.trim="usuario.email"
+                            required="true"
+                            autofocus
+                            :class="{
+                                'p-invalid': submitted && !usuario.email,
+                            }"
+                        />
+                        <small
+                            class="p-error"
+                            v-if="submitted && !usuario.email"
+                            >Obrigatório.</small
+                        >
+                    </div>
+                    <div class="field col-12">
                         <label>Login</label>
                         <InputText
                             v-model.trim="usuario.login"
@@ -36,27 +66,22 @@
                             v-if="submitted && !usuario.senha"
                             >Obrigatório.</small
                         >
-                        <small class="esqueceu-senha" @click="recuperarSenha"
-                            >Esqueceu sua senha?</small
-                        >
                     </div>
-                    <div class="field col-12">
+                    <div class="field col-12 botoes">
                         <Button
-                            class="p-button-raised"
-                            label="Entrar"
-                            @click="entrar"
+                            class="p-button-raised p-button-warning"
+                            label="Voltar"
+                            icon="pi pi-chevron-left"
+                            @click="this.$router.push({ name: 'login' })"
+                        />
+                        <Button
+                            class="p-button-raised p-button-success"
+                            label="Cadastrar"
+                            icon="pi pi-check"
+                            @click="cadastrar"
                         />
                     </div>
                 </div>
-            </div>
-            <Divider align="center"> </Divider>
-            <div class="box-registro">
-                <p>
-                    Ainda não tem uma conta?
-                    <span class="cadastro-link" @click="cadastrar"
-                        >Cadastre-se</span
-                    >
-                </p>
             </div>
         </div>
     </div>
@@ -74,20 +99,17 @@ export default {
     },
     methods: {
         cadastrar() {
-            this.$router.push({ name: "UsuarioCadastro" });
-        },
-        entrar() {
             this.submitted = true;
             if (this.validaCampos()) {
-                this.$router.push({ name: "home" });
             }
         },
-
-        recuperarSenha() {
-            alert("Esqueceu sua Senha!");
-        },
         validaCampos() {
-            return this.usuario.login && this.usuario.senha;
+            return (
+                this.usuario.nome &&
+                this.usuario.login &&
+                this.usuario.senha &&
+                this.usuario.email
+            );
         },
     },
     mounted() {},
@@ -143,33 +165,22 @@ export default {
     justify-content: center;
 }
 
-.cadastro-link {
-    color: #23343ccb;
-    font-weight: 600;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.cadastro-link:hover {
-    color: #23343c;
-}
-
 label {
     display: block;
     width: 100%;
     font-weight: 600;
 }
 
-.esqueceu-senha {
-    color: rgba(255, 0, 0, 0.795);
-    display: block;
-    font-size: 12px;
-    font-weight: 600px;
-    cursor: pointer;
-    font-weight: 600;
+button[type="button"] {
+    margin-right: 20px;
 }
 
-.esqueceu-senha:hover {
-    color: rgb(255, 0, 0);
+.p-button-warning {
+    color: white !important;
+}
+
+.botoes {
+    margin-top: 20px;
+    margin-bottom: 25px;
 }
 </style>

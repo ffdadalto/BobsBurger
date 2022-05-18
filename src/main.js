@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import vuex from './store/store'
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -53,6 +54,7 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(router);
+app.use(vuex);
 app.config.globalProperties.$axios = {...axiosInstance }
 
 app.component('Button', Button);
