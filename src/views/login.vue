@@ -42,6 +42,7 @@
                     </div>
                     <div class="field col-12">
                         <Button
+                            icon="pi pi-sign-in"
                             class="p-button-raised"
                             label="Entrar"
                             @click="entrar"
@@ -80,6 +81,7 @@ export default {
             this.submitted = true;
             if (this.validaCampos()) {
                 this.$router.push({ name: "home" });
+                this.$store.state.usuarioLogado = true;
             }
         },
 
