@@ -7,29 +7,36 @@
             <div class="box-form">
                 <div class="formgrid grid">
                     <div class="field col-12">
-                        <label>Nome</label>
-                        <InputText
-                            v-model.trim="usuario.nome"
-                            required="true"
-                            autofocus
-                            :class="{
-                                'p-invalid': submitted && !usuario.nome,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-user"></i>
+                            </span>
+                            <InputText
+                                v-model.trim="usuario.nome"
+                                autofocus
+                                placeholder="Nome"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.nome,
+                                }"
+                            />
+                        </div>
                         <small class="p-error" v-if="submitted && !usuario.nome"
                             >Obrigatório.</small
                         >
                     </div>
                     <div class="field col-12">
-                        <label>E-Mail</label>
-                        <InputText
-                            v-model.trim="usuario.email"
-                            required="true"
-                            autofocus
-                            :class="{
-                                'p-invalid': submitted && !usuario.email,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-at"></i>
+                            </span>
+                            <InputText
+                                v-model.trim="usuario.email"
+                                placeholder="E-mail"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.email,
+                                }"
+                            />
+                        </div>
                         <small
                             class="p-error"
                             v-if="submitted && !usuario.email"
@@ -37,15 +44,19 @@
                         >
                     </div>
                     <div class="field col-12">
-                        <label>Login</label>
-                        <InputText
-                            v-model.trim="usuario.login"
-                            required="true"
-                            autofocus
-                            :class="{
-                                'p-invalid': submitted && !usuario.login,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-user-plus"></i>
+                            </span>
+                            <InputText
+                                v-model.trim="usuario.login"
+                                autofocus
+                                placeholder="Login"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.login,
+                                }"
+                            />
+                        </div>
                         <small
                             class="p-error"
                             v-if="submitted && !usuario.login"
@@ -53,18 +64,49 @@
                         >
                     </div>
                     <div class="field col-12">
-                        <label>Senha</label>
-                        <Password
-                            v-model.trim="usuario.senha"
-                            toggleMask
-                            :class="{
-                                'p-invalid': submitted && !usuario.senha,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-eye-slash"></i>
+                            </span>
+                            <Password
+                                v-model.trim="usuario.senha"
+                                placeholder="Senha"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.senha,
+                                }"
+                            ></Password>
+                        </div>
                         <small
                             class="p-error"
                             v-if="submitted && !usuario.senha"
                             >Obrigatório.</small
+                        >
+                    </div>
+                    <div class="field col-12">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-eye-slash"></i>
+                            </span>
+                            <Password
+                                v-model.trim="confirmaSenha"
+                                placeholder="Confirme a senha"
+                                :feedback="false"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.senha,
+                                }"
+                            ></Password>
+                        </div>
+                        <small
+                            class="p-error"
+                            v-if="submitted && !usuario.senha"
+                            >Obrigatório.</small
+                        >
+                        <small
+                            class="p-error"
+                            v-if="
+                                submitted && !(usuario.senha === confirmaSenha)
+                            "
+                            >Senhas não conferem.</small
                         >
                     </div>
                     <div class="field col-12 botoes">
@@ -84,6 +126,7 @@
                 </div>
             </div>
         </div>
+        <Toast position="top-center" />
     </div>
 </template>
 
@@ -95,12 +138,40 @@ export default {
         return {
             usuario: {},
             submitted: false,
+            confirmaSenha: "",
+            url: "/usuario/",
         };
     },
     methods: {
-        cadastrar() {
+        async cadastrar() {
             this.submitted = true;
             if (this.validaCampos()) {
+                try {
+                    this.usuario.ativo = true;
+                    await this.$axios.post(this.url, this.usuario);
+
+                    this.$toast.add({
+                        severity: "success",
+                        summary: "Sucesso",
+                        detail: `Cadastro realizado com sucesso. Voce será redirecionado para a pagina de login em instantes.`,
+                        life: 3000,
+                    });
+
+                    setTimeout(() => {
+                        // Redireciona para pagina de login
+                        this.$router.push({ name: "login" });
+                    }, "3000");
+                } catch (error) {
+                    console.error(error);
+                    this.$toast.add({
+                        severity: "error",
+                        summary: "Erro no cadastro",
+                        detail: `Não foi possível cadastrar o usuário ${this.usuario.login}! Erro: ${error}`,
+                        life: 3000,
+                    });
+                } finally {
+                    this.loading = false;
+                }
             }
         },
         validaCampos() {
@@ -108,7 +179,9 @@ export default {
                 this.usuario.nome &&
                 this.usuario.login &&
                 this.usuario.senha &&
-                this.usuario.email
+                this.confirmaSenha &&
+                this.usuario.email &&
+                this.usuario.senha === this.confirmaSenha
             );
         },
     },
@@ -182,5 +255,9 @@ button[type="button"] {
 .botoes {
     margin-top: 20px;
     margin-bottom: 25px;
+}
+
+.p-error {
+    margin-right: 10px;
 }
 </style>

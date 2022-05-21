@@ -7,15 +7,19 @@
             <div class="box-form">
                 <div class="formgrid grid">
                     <div class="field col-12">
-                        <label>Login</label>
-                        <InputText
-                            v-model.trim="usuario.login"
-                            required="true"
-                            autofocus
-                            :class="{
-                                'p-invalid': submitted && !usuario.login,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-user-plus"></i>
+                            </span>
+                            <InputText
+                                v-model.trim="usuario.login"
+                                autofocus
+                                placeholder="Login"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.login,
+                                }"
+                            />
+                        </div>
                         <small
                             class="p-error"
                             v-if="submitted && !usuario.login"
@@ -23,21 +27,23 @@
                         >
                     </div>
                     <div class="field col-12">
-                        <label>Senha</label>
-                        <Password
-                            v-model.trim="usuario.senha"
-                            toggleMask
-                            :class="{
-                                'p-invalid': submitted && !usuario.senha,
-                            }"
-                        />
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-eye-slash"></i>
+                            </span>
+                            <Password
+                                v-model.trim="usuario.senha"
+                                placeholder="Senha"
+                                :feedback="false"
+                                :class="{
+                                    'p-invalid': submitted && !usuario.senha,
+                                }"                                
+                            ></Password>
+                        </div>
                         <small
                             class="p-error"
                             v-if="submitted && !usuario.senha"
                             >Obrigatório.</small
-                        >
-                        <small class="esqueceu-senha" @click="recuperarSenha"
-                            >Esqueceu sua senha?</small
                         >
                     </div>
                     <div class="field col-12">
@@ -163,7 +169,7 @@ label {
 }
 
 .esqueceu-senha {
-    color: rgba(255, 0, 0, 0.795);
+    color: #878787cb;
     display: block;
     font-size: 12px;
     font-weight: 600px;
