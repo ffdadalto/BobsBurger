@@ -106,13 +106,30 @@
 
         <Dialog
             v-model:visible="pedidoDialog"
-            :style="{ width: '550px' }"
+            :style="{ width: '900px' }"
             header="Cadastro de pedidos"
             :modal="true"
             class="p-fluid"
         >
             <div class="formgrid grid">
-                <div class="field col-12">
+                <div class="field col-2">
+                    <label>Número</label>
+                    <InputText
+                        id="numero"
+                        v-model.trim.number="pedido.numero"
+                        required="true"
+                        :class="{
+                            'p-invalid': submitted && pedido.numero == 0,
+                        }"
+                        disabled="true"
+                    />
+                    <small
+                        class="p-error"
+                        v-if="submitted && pedido.numero == 0"
+                        >Obrigatório.</small
+                    >
+                </div>
+                <div class="field col-6">
                     <label>Cliente</label>
                     <AutoComplete
                         v-model="clienteSelecionado"
@@ -133,38 +150,82 @@
                         >Obrigatório</small
                     >
                 </div>
-                <div class="field col-3">
-                    <label>Número</label>
-                    <InputText
-                        id="numero"
-                        v-model.trim.number="pedido.numero"
-                        required="true"
-                        :class="{
-                            'p-invalid': submitted && pedido.numero == 0,
-                        }"
-                        disabled="true"
-                    />
+                <div class="field col-4">
+                    <label>Situação do Pedido</label>
+                    <AutoComplete
+                        v-model="situacaoSelecionada"
+                        :suggestions="situacoesFiltradas"
+                        @complete="procurarSituacao($event)"
+                        :dropdown="true"
+                        field="nome"
+                        forceSelection
+                        placeholder="Selecione uma..."
+                    >
+                        <template #item="slotProps">
+                            <div>{{ slotProps.item.nome }}</div>
+                        </template>
+                    </AutoComplete>
                     <small
                         class="p-error"
-                        v-if="submitted && pedido.numero == 0"
+                        v-if="submitted && !situacaoSelecionada"
                         >Obrigatório.</small
                     >
                 </div>
+                <div class="field col-12">
+                    <hr />
+                </div>
+                <div class="field col-1">
+                    <InputText v-model.trim="itemNovo.qtd" placeholder="Qtd" />
+                </div>
+                <div class="field col-6">
+                    <InputText
+                        v-model.trim="itemNovo.produto"
+                        autofocus
+                        placeholder="Produto"
+                    />
+                </div>
+                <div class="field col-1">
+                    <Button icon="pi pi-check" @click="addItem" />
+                </div>
+                <div class="field col-12">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Qtd</th>
+                                <th scope="col">Item</th>
+                                <th scope="col">P. Unit.</th>
+                                <th scope="col">P. Total</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="itensPedido.length > 0">
+                            <tr v-for="(item, i) in itensPedido" :key="i">
+                                <th scope="row">{{ i + 1 }}</th>
+                                <td>{{ item.qtd }}</td>
+                                <td>{{ item.produto }}</td>
+                                <td>{{ item.vUnit }}</td>
+                                <td>{{ item.vTotal }}</td>
+                                <td>
+                                    <Button
+                                        icon="pi pi-times"
+                                        class="
+                                            p-button-rounded
+                                            p-button-danger
+                                            p-button-text
+                                        "
+                                    />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                
                 <div class="field col-3">
                     <label>Valor Total</label>
                     <InputText
                         id="valorTotal"
                         v-model.trim="pedido.valorTotal"
                         required="true"
-                        :class="{
-                            'p-invalid': submitted && pedido.valorTotal == null,
-                        }"
                     />
-                    <small
-                        class="p-error"
-                        v-if="submitted && pedido.valorTotal == null"
-                        >Obrigatório.</small
-                    >
                 </div>
                 <div class="field col-6">
                     <label>Pagamento</label>
@@ -187,27 +248,7 @@
                         >Obrigatório.</small
                     >
                 </div>
-                <div class="field col-6">
-                    <label>Situação do Pedido</label>
-                    <AutoComplete
-                        v-model="situacaoSelecionada"
-                        :suggestions="situacoesFiltradas"
-                        @complete="procurarSituacao($event)"
-                        :dropdown="true"
-                        field="nome"
-                        forceSelection
-                        placeholder="Selecione uma..."
-                    >
-                        <template #item="slotProps">
-                            <div>{{ slotProps.item.nome }}</div>
-                        </template>
-                    </AutoComplete>
-                    <small
-                        class="p-error"
-                        v-if="submitted && !situacaoSelecionada"
-                        >Obrigatório.</small
-                    >
-                </div>
+
                 <div class="field">
                     <label class="mb-3">Situação</label>
                     <div class="field-radiobutton col-4">
@@ -345,6 +386,8 @@ export default {
             formasPagamentos: [],
             situacoes: [],
             filtro: "todos",
+            itemNovo: {},
+            itensPedido: [],
         };
     },
     methods: {
@@ -667,6 +710,12 @@ export default {
                 this.pedido.numero > 0 &&
                 this.pedido.valorTotal != null
             );
+        },
+        addItem() {
+            var aux = { ...this.itemNovo };
+            this.itensPedido.push(aux);
+            this.itemNovo.qtd = null;
+            this.itemNovo.produto = null;
         },
     },
     mounted() {
